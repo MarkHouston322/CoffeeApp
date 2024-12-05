@@ -1,0 +1,82 @@
+server:
+  port: 9030
+
+spring:
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+  application:
+    name: "customer-service"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+  cloud:
+    function:
+      definition: customerPurchase
+    stream:
+      bindings:
+        sendCustomer-out-0:
+          destination: send-customer
+        customerPurchase-in-0:
+          destination: send-purchase
+          group: ${spring.application.name}
+        customerPurchase-out-0:
+          destination: purchase-confirmation
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: "http://eureka-server:8070/eureka/"
+
+info:
+  app:
+    name: "customer-service"
+    description: "Customer service"
+    version: "1.0.0"
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+endpoints:
+  shutdown:
+    enabled: true
+
+
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

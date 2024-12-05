@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteTargetsManager">
+    <targets>
+      <target name="selling-service" type="docker-compose" uuid="e12f235d-e733-4f39-8544-3f9b9618d7e7">
+        <config>
+          <option name="targetPlatform">
+            <TargetPlatform />
+          </option>
+          <option name="configurationFiles">
+            <list>
+              <option value="C:\Users\biofi\IdeaProjects\CoffeeAppV2\docker-compose\docker-compose.yml" />
+            </list>
+          </option>
+          <option name="projectName" value="selling_service_docker" />
+          <option name="serviceName" value="selling-service" />
+        </config>
+        <ContributedStateBase type="JavaLanguageRuntime">
+          <config>
+            <option name="homePath" value="/opt/java/openjdk" />
+            <option name="javaVersionString" value="17.0.11" />
+          </config>
+        </ContributedStateBase>
+      </target>
+      <target name="selling-service2" type="docker-compose" uuid="81c21011-099b-4297-a0d3-8797f33942a0">
+        <config>
+          <option name="targetPlatform">
+            <TargetPlatform />
+          </option>
+          <option name="configurationFiles">
+            <list>
+              <option value="C:\Users\biofi\IdeaProjects\CoffeeAppV2\docker-compose\docker-compose.yml" />
+            </list>
+          </option>
+          <option name="projectName" value="selling-service-docker" />
+          <option name="serviceName" value="selling-service" />
+        </config>
+        <ContributedStateBase type="JavaLanguageRuntime">
+          <config>
+            <option name="homePath" value="/opt/java/openjdk" />
+            <option name="javaVersionString" value="17.0.11" />
+          </config>
+        </ContributedStateBase>
+      </target>
+    </targets>
+  </component>
+</project>

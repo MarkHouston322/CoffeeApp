@@ -1,0 +1,29 @@
+deploymentName: customers-deployment
+serviceName: customers
+appLabel: customers
+appName: customers
+dbName: customer_db
+dbHost: customerdb
+
+replicaCount: 1
+
+image:
+  repository: biofinity/customer-service:s61
+
+containerPort: 9030
+
+service:
+  type: ClusterIP
+  port: 9030
+  targetPort: 9030
+
+appname_enabled: true
+profile_enabled: true
+config_enabled: true
+eureka_enabled: true
+resouceserver_enabled: true
+otel_enabled: true
+rabbit_enabled: true
+redis_enabled: false
+db_enabled: true
+kafka_enabled: false

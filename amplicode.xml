@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AmplicodeDatabaseMigrationSettings" liquibaseFileType="YAML" />
+  <component name="AmplicodePersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="customer-service" name="Default">
+        <packages>
+          <package value="CoffeeApp.customerservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="employees-service" name="Default">
+        <packages>
+          <package value="CoffeeApp.employeesservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="financial-service" name="Default">
+        <packages>
+          <package value="CoffeeApp.financialservice.in.Coffee.application" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="selling-service" name="Default">
+        <packages>
+          <package value="CoffeeApp.sellingservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="storage-service" name="Default">
+        <packages>
+          <package value="CoffeeApp.storageservice" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>

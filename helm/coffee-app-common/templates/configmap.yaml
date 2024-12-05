@@ -1,0 +1,35 @@
+{{- define "common.configmap" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.global.configMapName }}
+data:
+  SPRING_PROFILES_ACTIVE: {{ .Values.global.activeProfile | quote }}
+  SPRING_CONFIG_IMPORT: {{ .Values.global.configServerURL | quote }}
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: {{ .Values.global.eurekaServerURL | quote }}
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: {{ .Values.global.keyCloakURL | quote }}
+  JAVA_TOOL_OPTIONS: {{ .Values.global.openTelemetryJavaAgent | quote }}
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.global.otelExporterEndPoint | quote }}
+  OTEL_METRICS_EXPORTER: {{ .Values.global.otelMetricsExporter | quote }}
+{{/*  SPRING_KAFKA_BOOTSTRAP_SERVERS: {{ .Values.global.kafkaServer | quote }}*/}}
+  SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: {{ .Values.global.kafkaKeySerializer | quote }}
+  SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: {{ .Values.global.kafkaValueSerializer | quote }}
+  SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: {{ .Values.global.kafkaUrl | quote }}
+  SPRING_RABBITMQ_HOST: {{ .Values.global.rabbitMQHost | quote }}
+  SPRING_RABBITMQ_STREAM_PORT: {{ .Values.global.rabbitMQPort | quote }}
+  SPRING_RABBITMQ_STREAM_USERNAME: {{ .Values.global.rabbitMQUser | quote }}
+  SPRING_RABBITMQ_STREAM_PASSWORD: {{ .Values.global.rabbitMQPassword | quote }}
+  SPRING_DATA_REDIS_CONNECT-TIMEOUT: {{ .Values.global.redisConnectTimeout | quote }}
+  SPRING_DATA_REDIS_HOST: {{ .Values.global.redisHost | quote }}
+  SPRING_DATA_REDIS_PASSWORD: {{ .Values.global.redisPassword | quote }}
+  SPRING_DATA_REDIS_PORT: {{ .Values.global.redisPort | quote }}
+  SPRING_DATA_REDIS_URL: {{ .Values.global.redisUrl | quote }}
+  SPRING_DATA_REDIS_TIMEOUT: {{ .Values.global.redisTimeout | quote }}
+  SPRING_DATA_REDIS_DATABASE: {{ .Values.global.redisDB | quote }}
+  SPRING_DATA_REDIS_USERNAME: {{ .Values.global.redisUser | quote }}
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: {{ .Values.global.dbDriverClass | quote }}
+  SPRING_JPA_DATABASE-PLATFORM: {{ .Values.global.dbPlatform | quote }}
+  SPRING_DATASOURCE_USERNAME: {{ .Values.global.dbUser | quote }}
+  SPRING_DATASOURCE_PASSWORD: {{ .Values.global.dbPassword | quote }}
+
+{{- end -}}

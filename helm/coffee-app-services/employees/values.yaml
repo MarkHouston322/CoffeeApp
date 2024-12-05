@@ -1,0 +1,29 @@
+deploymentName: employees-deployment
+serviceName: employees
+appLabel: employees
+appName: employees
+dbName: employees_db
+dbHost: employeesdb
+
+replicaCount: 1
+
+image:
+  repository: biofinity/employees-service:V1.0
+
+containerPort: 9020
+
+service:
+  type: ClusterIP
+  port: 9020
+  targetPort: 9020
+
+appname_enabled: true
+profile_enabled: true
+config_enabled: true
+eureka_enabled: true
+resouceserver_enabled: true
+otel_enabled: true
+rabbit_enabled: true
+redis_enabled: false
+db_enabled: true
+kafla_enabled: false

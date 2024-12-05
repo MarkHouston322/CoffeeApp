@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/CoffeeAppV2.iml" filepath="$PROJECT_DIR$/.idea/CoffeeAppV2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/financial-service/financial-service.iml" filepath="$PROJECT_DIR$/financial-service/financial-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/selling-service/selling-service.iml" filepath="$PROJECT_DIR$/selling-service/selling-service.iml" />
+    </modules>
+  </component>
+</project>

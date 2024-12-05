@@ -1,0 +1,29 @@
+deploymentName: selling-deployment
+serviceName: selling
+appLabel: selling
+appName: selling
+dbName: selling_db
+dbHost: sellingdb
+
+replicaCount: 1
+
+image:
+  repository: biofinity/selling-service:V1.0
+
+containerPort: 8090
+
+service:
+  type: ClusterIP
+  port: 8090
+  targetPort: 8090
+
+appname_enabled: true
+profile_enabled: true
+config_enabled: true
+eureka_enabled: true
+resouceserver_enabled: true
+otel_enabled: true
+rabbit_enabled: true
+redis_enabled: true
+db_enabled: true
+kafka_enabled: true

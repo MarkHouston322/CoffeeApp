@@ -1,0 +1,27 @@
+deploymentName: gatewayserver-deployment
+serviceName: gatewayserver
+appLabel: gatewayserver
+appName: gatewayserver
+
+replicaCount: 1
+
+image:
+  repository: biofinity/gateway-server:V1.0
+
+containerPort: 8072
+
+service:
+  type: LoadBalancer
+  port: 8072
+  targetPort: 8072
+
+appname_enabled: true
+profile_enabled: true
+config_enabled: false
+eureka_enabled: true
+resouceserver_enabled: true
+otel_enabled: true
+rabbit_enabled: true
+redis_enabled: true
+db_enabled: false
+kafka_enabled: false

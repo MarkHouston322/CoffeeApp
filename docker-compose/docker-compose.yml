@@ -1,0 +1,560 @@
+services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.2
+    container_name: keycloak
+    ports:
+      - "7080:8080"
+    environment:
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "admin"
+    command: "start-dev"
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  kafka:
+    image: docker.io/bitnami/kafka:3.7
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    networks:
+      - coffee-app
+
+  clickhouse:
+    restart: always
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    environment:
+      STREAM_LIKE_EMGINE_ALLOW_DIRECT_SELECT: 1
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1" ]
+    volumes:
+      - "clickhouse-volume:/var/lib/clickhouse/"
+    networks:
+      - coffee-app
+
+  read:
+    image: grafana/loki:3.0.0
+    container_name: read
+    command: "-config.file=/etc/loki/config.yml -target=read"
+    ports:
+      - "3101:3100"
+      - "7946"
+      - "9095"
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/config.yml
+    depends_on:
+      - minio
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: &loki-dns
+      coffee-app:
+        aliases:
+          - loki
+
+  write:
+    image: grafana/loki:3.0.0
+    container_name: write
+    command: "-config.file=/etc/loki/config.yml -target=write"
+    ports:
+      - "3102:3100"
+      - "7946"
+      - "9095"
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/config.yml
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      - minio
+    networks:
+      <<: *loki-dns
+
+  promtail:
+    image: grafana/promtail:2.9.2
+    container_name: promtail
+    volumes:
+      - ./promtail/promtail-local-config.yml:/etc/promtail-local-config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+    - '--config.file=/etc/promtail-local-config.yml'
+    depends_on:
+      - gateway
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /data/loki-data && \
+        mkdir -p /data/loki-ruler && \
+        minio server /data
+    environment:
+      - MINIO_ROOT_USER=loki
+      - MINIO_ROOT_PASSWORD=supersecret
+      - MINIO_PROMETHEUS_AUTH_TYPE=public
+      - MINIO_UPDATE=off
+    ports:
+      - "9000"
+    volumes:
+      - ./.data/minio:/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 15s
+      timeout: 20s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      #- ../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+#    command: -config.file=/etc/prometheus/prometheus.yml
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  tempo:
+    image: grafana/tempo
+    container_name: tempo
+    command:
+      - '--config.file=/etc/tempo.yml'
+    ports:
+      - "3110:3100"
+      - "4317:4317"
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo.yml
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    depends_on:
+      - gateway
+      - clickhouse
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        /run.sh
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/datasource:/etc/datasource
+    command:
+      - '--config.file=/etc/grafana/datasource.yml'
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  gateway:
+    image: nginx:latest
+    container_name: gateway
+    depends_on:
+      - read
+      - write
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        cat <<EOF > /etc/nginx/nginx.conf
+        user  nginx;
+        worker_processes  5;  ## Default: 1
+
+        events {
+          worker_connections   1000;
+        }
+
+        http {
+          resolver 127.0.0.11;
+
+          server {
+            listen             3100;
+
+            location = / {
+              return 200 'OK';
+              auth_basic off;
+            }
+
+            location = /api/prom/push {
+              proxy_pass       http://write:3100\$$request_uri;
+            }
+
+            location = /api/prom/tail {
+              proxy_pass       http://read:3100\$$request_uri;
+              proxy_set_header Upgrade \$$http_upgrade;
+              proxy_set_header Connection "upgrade";
+            }
+
+            location ~ /api/prom/.* {
+              proxy_pass       http://read:3100\$$request_uri;
+            }
+
+            location = /loki/api/v1/push {
+              proxy_pass       http://write:3100\$$request_uri;
+            }
+
+            location = /loki/api/v1/tail {
+              proxy_pass       http://read:3100\$$request_uri;
+              proxy_set_header Upgrade \$$http_upgrade;
+              proxy_set_header Connection "upgrade";
+            }
+
+            location ~ /loki/api/.* {
+              proxy_pass       http://read:3100\$$request_uri;
+            }
+          }
+        }
+        EOF
+        /docker-entrypoint.sh nginx -g "daemon off;"
+    ports:
+      - "3100:3100"
+    healthcheck:
+      test: [ "CMD", "service", "nginx", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  configserver:
+    image: "biofinity/config-server"
+    container_name: config-server
+    ports:
+      - "8071:8071"
+    environment:
+      OTEL_SERVICE_NAME: "configserver"
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  gateway-server:
+    image: "biofinity/gateway-server:s21"
+    container_name: gateway-server
+    ports:
+      - "8072:8072"
+    healthcheck:
+      test: "curl --fail --silent localhost:8072/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      storage-service:
+        condition: service_healthy
+      selling-service:
+        condition: service_healthy
+      financial-service:
+        condition: service_healthy
+      employees-service:
+        condition: service_healthy
+      customer-service:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "gateway-server"
+      OTEL_SERVICE_NAME: "gateway-server"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
+      SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_TIMEOUT: 1s
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  eureka-server:
+    image: "biofinity/eureka-server"
+    container_name: eureka-server
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "eureka-server"
+
+  storage-service:
+    image: "biofinity/storage-service:s30"
+    container_name: storage-ms
+#    ports:
+#      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://storage_db:5432/storage_db"
+      OTEL_SERVICE_NAME: "storage-service"
+      SPRING_APPLICATION_NAME: "storage-service"
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+    depends_on:
+      storage_db:
+        condition: service_healthy
+
+  selling-service:
+    image: "biofinity/selling-service:s36"
+    container_name: selling-ms
+#    ports:
+#      - "8090:8090"
+    environment:
+      SPRING_APPLICATION_NAME: "selling-service"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://selling_db:5432/selling_db"
+      SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_TIMEOUT: 1s
+      OTEL_SERVICE_NAME: "selling-service"
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
+      SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
+    healthcheck:
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+    depends_on:
+      selling_db:
+        condition: service_healthy
+
+  financial-service:
+    image: "biofinity/financial-service:s35"
+    container_name: financial-ms
+#    ports:
+#      - "9010:9010"
+    environment:
+      SPRING_APPLICATION_NAME: "financial-service"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://financial_db:5432/financial_db"
+      OTEL_SERVICE_NAME: "financial-service"
+    healthcheck:
+      test: "curl --fail --silent localhost:9010/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+    depends_on:
+      financial_db:
+        condition: service_healthy
+
+  employees-service:
+    image: "biofinity/employees-service:s35"
+    container_name: employees-ms
+#    ports:
+#      - "9020:9020"
+    environment:
+      SPRING_APPLICATION_NAME: "employees-service"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://employees_db:5432/employees_db"
+      OTEL_SERVICE_NAME: "employees-service"
+    healthcheck:
+      test: "curl --fail --silent localhost:9020/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+    depends_on:
+      employees_db:
+        condition: service_healthy
+
+  customer-service:
+    image: "biofinity/customer-service:s30"
+    container_name: customer-ms
+#    ports:
+#      - "9030:9030"
+    environment:
+      SPRING_APPLICATION_NAME: "customer-service"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://customer_db:5432/customer_db"
+      OTEL_SERVICE_NAME: "customer-service"
+    healthcheck:
+      test: "curl --fail --silent localhost:9030/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+    depends_on:
+      customer_db:
+        condition: service_healthy
+
+  rabbit:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - coffee-app
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    hostname: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      timeout: 10s
+      retries: 10
+    networks:
+      - coffee-app
+
+  storage_db:
+    image: postgres:13.3
+    container_name: storage_db
+    environment:
+      POSTGRES_DB: "storage_db"
+    volumes:
+      - ./storage.sql:/docker-entrypoint-initdb.d/init.sql
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    ports:
+      - "5432:5432"
+
+  selling_db:
+    image: postgres:13.3
+    container_name: selling_db
+    environment:
+      POSTGRES_DB: "selling_db"
+    volumes:
+      - ./selling.sql:/docker-entrypoint-initdb.d/init.sql
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    ports:
+      - "5433:5432"
+
+  financial_db:
+    image: postgres:13.3
+    container_name: financial_db
+    environment:
+      POSTGRES_DB: "financial_db"
+    volumes:
+      - ./financial.sql:/docker-entrypoint-initdb.d/init.sql
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    ports:
+      - "5434:5432"
+
+  employees_db:
+    image: postgres:13.3
+    container_name: employees_db
+    environment:
+      POSTGRES_DB: "employees_db"
+    volumes:
+      - ./employee.sql:/docker-entrypoint-initdb.d/init.sql
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    ports:
+      - "5435:5432"
+
+  customer_db:
+    image: postgres:13.3
+    container_name: customer_db
+    environment:
+      POSTGRES_DB: "customer_db"
+    volumes:
+      - ./customer.sql:/docker-entrypoint-initdb.d/init.sql
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    ports:
+      - "5436:5432"
+
+volumes:
+  clickhouse-volume:
+  kafka_data:
+    driver: local
+
+networks:
+  coffee-app:
+    driver: "bridge"

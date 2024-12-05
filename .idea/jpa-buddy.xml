@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpaBuddyIdeaProjectConfig" ddlActionDbType="postgres">
+    <option name="defaultUnitInitialized" value="true" />
+    <option name="renamerInitialized" value="true" />
+    <option name="reverseEngineeringLastDbConnectionId" value="85ac0600-b804-413f-aa2d-473579c7b4a8" />
+    <option name="reLastEntityCreationPackage" value="storage-service/src/main/java/CoffeeApp/storageservice" />
+  </component>
+</project>

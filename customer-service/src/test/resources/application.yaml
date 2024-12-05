@@ -1,0 +1,8 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+  cloud:
+    config:
+      enabled: false
