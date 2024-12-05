@@ -29,6 +29,7 @@ public class IngredientService {
         return convertToIngredientDto(ingredient);
     }
 
+    @Transactional(noRollbackFor = ResourceNotFoundException.class)
     public Ingredient findByName(String name) {
         return ingredientRepository.findByName(name).orElseThrow(
                 () -> new ResourceNotFoundException("Ingredient", "name", name)

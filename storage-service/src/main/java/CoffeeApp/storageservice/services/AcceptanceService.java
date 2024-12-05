@@ -143,13 +143,6 @@ public class AcceptanceService implements ContainIngredients {
             } catch (ResourceNotFoundException e){
                 itemService.addItem(item);
             }
-
-//            Item optionalItem = itemService.findByName(item.getName());
-//            if (optionalItem.isPresent()){
-//                itemService.increaseItem(item.getName(),item.getQuantityInStock());
-//            } else {
-//                itemService.addItem(item);
-//            }
         }
     }
 

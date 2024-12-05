@@ -6,6 +6,7 @@ import CoffeeApp.storageservice.exceptions.alreadyExistsExceptions.ItemAlreadyEx
 import CoffeeApp.storageservice.exceptions.ResourceNotFoundException;
 import CoffeeApp.storageservice.models.item.Item;
 import CoffeeApp.storageservice.repositories.itemRepository.ItemRepository;
+import CoffeeApp.storageservice.services.ingredientService.IngredientService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -25,6 +26,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ModelMapper modelMapper;
     private final StreamBridge streamBridge;
+    private final IngredientService ingredientService;
 
     public ItemDto findById(int id){
         Item item = checkIfExists(id);
