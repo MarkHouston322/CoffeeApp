@@ -19,7 +19,8 @@ global:
   redisPort: 6379
   redisDB: 0
   redisTimeout: "5s"
-  kafkaUrl: "kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092"
+#  kafkaUrl:  kafka.default.svc.cluster.local:9092
+  kafkaServer: kafka.default.svc.cluster.local:9092
   kafkaKeySerializer: org.apache.kafka.common.serialization.StringSerializer
   kafkaValueSerializer: org.apache.kafka.common.serialization.StringSerializer
   dbDriverClass: org.postgresql.Driver
