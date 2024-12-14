@@ -436,7 +436,7 @@ initdbScripts:
         discount Int32,
         total_with_dsc Int32
     )
-    ENGINE = Kafka('kafka.default.svc.cluster.local:9092', 'orders', 'clickhouse', 'JSONEachRow')
+    ENGINE = Kafka('kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092', 'orders', 'clickhouse', 'JSONEachRow')
     settings kafka_thread_per_consumer = 0, kafka_num_consumers = 1;
     
     CREATE TABLE drinks
@@ -445,7 +445,7 @@ initdbScripts:
         quantity Int32,
         sold_time DateTime
     )
-    ENGINE = Kafka('kafka.default.svc.cluster.local:9092', 'drinks', 'clickhouse', 'JSONEachRow')
+    ENGINE = Kafka('kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092', 'drinks', 'clickhouse', 'JSONEachRow')
     settings kafka_thread_per_consumer = 0, kafka_num_consumers = 1;
     SQL
 ## @param initdbScriptsSecret ConfigMap with the initdb scripts (Note: Overrides `initdbScripts`)
@@ -560,7 +560,9 @@ lifecycleHooks: {}
 ##   - name: FOO
 ##     value: "bar"
 ##
-extraEnvVars: []
+extraEnvVars:
+  - name: STREAM_LIKE_ENGINE_ALLOW_DIRECT_SELECT
+    value: "1"
 ## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars for ClickHouse nodes
 ##
 extraEnvVarsCM: ""

@@ -138,11 +138,11 @@ spec:
               key: SPRING_DATA_REDIS_DATABASE
         {{- end }}
         {{- if .Values.kafka_enabled }}
-{{/*        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS*/}}
-{{/*          valueFrom:*/}}
-{{/*            configMapKeyRef:*/}}
-{{/*              name: {{ .Values.global.configMapName }}*/}}
-{{/*              key: SPRING_KAFKA_BOOTSTRAP_SERVERS*/}}
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.global.configMapName }}
+              key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         - name: SPRING_KAFKA_PRODUCER_KEY_SERIALIZER
           valueFrom:
             configMapKeyRef:
@@ -153,11 +153,11 @@ spec:
             configMapKeyRef:
               name: {{ .Values.global.configMapName }}
               key: SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER
-        - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
-          valueFrom:
-            configMapKeyRef:
-              name: {{ .Values.global.configMapName }}
-              key: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+{{/*        - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS*/}}
+{{/*          valueFrom:*/}}
+{{/*            configMapKeyRef:*/}}
+{{/*              name: {{ .Values.global.configMapName }}*/}}
+{{/*              key: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS*/}}
         {{- end }}
         {{- if .Values.db_enabled }}
         - name: SPRING_DATASOURCE_URl

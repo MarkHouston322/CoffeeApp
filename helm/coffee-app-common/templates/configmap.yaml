@@ -11,10 +11,10 @@ data:
   JAVA_TOOL_OPTIONS: {{ .Values.global.openTelemetryJavaAgent | quote }}
   OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.global.otelExporterEndPoint | quote }}
   OTEL_METRICS_EXPORTER: {{ .Values.global.otelMetricsExporter | quote }}
-{{/*  SPRING_KAFKA_BOOTSTRAP_SERVERS: {{ .Values.global.kafkaServer | quote }}*/}}
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: {{ .Values.global.kafkaServer | quote }}
   SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: {{ .Values.global.kafkaKeySerializer | quote }}
   SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: {{ .Values.global.kafkaValueSerializer | quote }}
-  SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: {{ .Values.global.kafkaUrl | quote }}
+{{/*  SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: {{ .Values.global.kafkaUrl | quote }}*/}}
   SPRING_RABBITMQ_HOST: {{ .Values.global.rabbitMQHost | quote }}
   SPRING_RABBITMQ_STREAM_PORT: {{ .Values.global.rabbitMQPort | quote }}
   SPRING_RABBITMQ_STREAM_USERNAME: {{ .Values.global.rabbitMQUser | quote }}
