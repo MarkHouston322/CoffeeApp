@@ -1,6 +1,7 @@
 package CoffeeApp.sellingservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
@@ -28,26 +29,9 @@ public class SellingServiceApplication {
 		return new ModelMapper();
 	}
 
-	@Bean
-	public ObjectMapper objectMapper() {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		return mapper;
-	}
-
-
 //	@Bean
-//	public SimpleDateFormat dateFormat(){
-//		return new SimpleDateFormat("dd.MM.yyyy HH:mm");
+//	public ObjectMapper objectMapper() {
+//		return new ObjectMapper();
 //	}
-
-//	@Bean
-//	public Jackson2ObjectMapperBuilder objectMapperBuilder() {
-//		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-//		builder.featuresToEnable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-//		builder.modulesToInstall(new JavaTimeModule());
-//		return builder;
-//	}
-
 
 }

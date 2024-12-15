@@ -25,6 +25,7 @@ public class GatewayServerApplication {
 						.filters(f -> f.rewritePath("/coffee-app/customer-service/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
 						.uri("lb://CUSTOMERS"))
+
 				.route(p -> p
 						.path("/coffee-app/employees-service/**")
 						.filters(f -> f.rewritePath("/coffee-app/employees-service/(?<segment>.*)", "/${segment}")

@@ -12,6 +12,8 @@ spec:
       app: {{ .Values.appLabel }}
   template:
     metadata:
+      annotations:
+        checksum/image: {{ include (print $.Template.BasePath "/values.yaml") . | sha256sum }}
       labels:
         app: {{ .Values.appLabel }}
     spec:

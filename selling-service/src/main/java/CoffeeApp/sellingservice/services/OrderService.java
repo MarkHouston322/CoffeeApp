@@ -18,6 +18,7 @@ import CoffeeApp.sellingservice.projections.GoodProjection;
 import CoffeeApp.sellingservice.repositories.OrderRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -232,7 +234,7 @@ public class OrderService {
     }
 
     private void sendOrderMessage(Order order, KafkaTemplate<String, ProceedOrderMessage> kafkaTemplate){
-        ProceedOrderMessage proceedOrderMessage = new ProceedOrderMessage(LocalDateTime.now().withNano(0), order.getTotal(), order.getDiscount(), order.getTotalWithDsc());
+        ProceedOrderMessage proceedOrderMessage = new ProceedOrderMessage(LocalDateTime.now(), order.getTotal(), order.getDiscount(), order.getTotalWithDsc());
         kafkaTemplate.send("orders", proceedOrderMessage);
     }
 
@@ -240,7 +242,6 @@ public class OrderService {
         SoldDrinkMessage soldDrinkMessage = new SoldDrinkMessage(goodInOrder.getGoodName(), goodInOrder.getQuantity(), LocalDateTime.now());
         kafkaTemplate.send("drinks",soldDrinkMessage);
     }
-
 
     private OrderDto convertToOrderDto(Order order) {
         return modelMapper.map(order, OrderDto.class);

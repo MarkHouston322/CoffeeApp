@@ -4,10 +4,14 @@ import CoffeeApp.sellingservice.dto.messages.ProceedOrderMessage;
 import com.google.gson.*;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.common.serialization.Serializer;
+import org.springframework.stereotype.Component;
 
 
 @AllArgsConstructor
+@Component
 public class OrderSerializer implements Serializer<ProceedOrderMessage> {
+
+    private final Gson gson;
 
 
     @Override
@@ -16,7 +20,6 @@ public class OrderSerializer implements Serializer<ProceedOrderMessage> {
     }
 
     private byte[] convertOrderToJsonBytes(ProceedOrderMessage proceedOrderMessage){
-       Gson gson = new Gson();
        String json = gson.toJson(proceedOrderMessage);
        return json.getBytes();
     }

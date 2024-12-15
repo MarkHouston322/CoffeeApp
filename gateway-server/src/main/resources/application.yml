@@ -49,3 +49,12 @@ info:
     name: "gatewayserver"
     description: "Gateway server application"
     version: "1.0.0"
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
+    org.springframework.boot.autoconfigure.security: DEBUG
+

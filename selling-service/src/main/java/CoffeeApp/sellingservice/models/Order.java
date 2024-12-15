@@ -56,16 +56,4 @@ public class Order {
     @Column(name = "employee_name")
     private String employeeName;
 
-
-//    public Order(LocalDateTime  orderDate, Integer total, Integer discount, Integer totalWithDsc) {
-//        this.orderDate = orderDate;
-//        this.total = total;
-//        this.discount = discount;
-//        this.totalWithDsc = totalWithDsc;
-//    }
-
-
-    public Order(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
 }
