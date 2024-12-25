@@ -28,7 +28,7 @@ public class TransactionType {
     private String name;
 
     @OneToMany(mappedBy = "type")
-    private List<Transactions> transactions;
+    private List<Transaction> transactions;
 
     public TransactionType(String name) {
         this.name = name;

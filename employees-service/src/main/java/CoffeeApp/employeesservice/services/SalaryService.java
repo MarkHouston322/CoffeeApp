@@ -1,6 +1,7 @@
 package CoffeeApp.employeesservice.services;
 
 import CoffeeApp.employeesservice.dto.messages.OrderMessage;
+import CoffeeApp.employeesservice.dto.messages.ProceedSalaryMessage;
 import CoffeeApp.employeesservice.dto.messages.SessionMessage;
 import CoffeeApp.employeesservice.dto.salaryDto.SalaryDto;
 import CoffeeApp.employeesservice.dto.salaryDto.SalaryResponse;
@@ -12,6 +13,7 @@ import CoffeeApp.employeesservice.models.Salary;
 import CoffeeApp.employeesservice.repositories.SalaryRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class SalaryService {
     private final EmployeeService employeeService;
     private final BonusService bonusService;
     private final ModelMapper modelMapper;
+    private final KafkaTemplate<String, ProceedSalaryMessage> salaryKafkaTemplate;
 
 
     public SalaryDto findById(Integer id){
@@ -92,6 +95,12 @@ public class SalaryService {
     public void closeSalarySession(){
         Salary currentSalarySession = findCurrentSalarySession();
         currentSalarySession.setIsClosed(true);
+        sendSalaryMessage(currentSalarySession,salaryKafkaTemplate);
+    }
+
+    private void sendSalaryMessage(Salary salary, KafkaTemplate<String, ProceedSalaryMessage> salaryKafkaTemplate){
+        ProceedSalaryMessage salaryMessage = new ProceedSalaryMessage(LocalDateTime.now(),salary.getEmployee().getName(), salary.getTotal());
+        salaryKafkaTemplate.send("salaries",salaryMessage);
     }
 
     private Salary checkIfExists(int id) {

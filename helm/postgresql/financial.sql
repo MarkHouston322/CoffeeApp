@@ -55,7 +55,7 @@ create table sessions
     employee_name          varchar default 'admin'::character varying not null
 );
 
-insert into sessions values (1,localtimestamp,0,0,0,0,0,0,0,null,false,0,'admin');
+insert into sessions values (0,localtimestamp,0,0,0,0,0,0,0,localtimestamp,true,0,'admin');
 
 alter table sessions
     owner to postgres;

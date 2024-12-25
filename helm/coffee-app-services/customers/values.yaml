@@ -8,7 +8,8 @@ dbHost: customerdb
 replicaCount: 1
 
 image:
-  repository: biofinity/customer-service:s61
+  repository: biofinity/customers:V1.0
+  pullPolicy: Always
 
 containerPort: 9030
 

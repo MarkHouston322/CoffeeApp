@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>CoffeeApp</groupId>
-    <artifactId>selling-service</artifactId>
+    <artifactId>selling</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>selling-service</name>
+    <name>selling</name>
     <description>Selling microservice in Coffee application</description>
     <properties>
         <java.version>17</java.version>
@@ -206,10 +206,10 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.4.4</version>
                 <configuration>
                     <to>
-                        <image>biofinity/${project.artifactId}:V2.1</image>
+                        <image>biofinity/${project.artifactId}:V1.0</image>
                     </to>
                 </configuration>
             </plugin>

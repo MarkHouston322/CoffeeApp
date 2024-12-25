@@ -1,21 +1,30 @@
 package CoffeeApp.sellingservice.serializers;
 
-import com.google.gson.*;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
+public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
+
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @Override
-    public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(src.format(FORMATTER));
+    public void write(JsonWriter out, LocalDateTime value) throws IOException {
+        if (value == null) {
+            out.nullValue();
+        } else {
+            // сериализуем LocalDateTime как строку в формате yyyy-MM-ddTHH:mm:ss
+            out.value(value.format(FORMATTER));
+        }
     }
 
     @Override
-    public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return LocalDateTime.parse(json.getAsString(), FORMATTER);
+    public LocalDateTime read(JsonReader in) throws IOException {
+        String str = in.nextString();
+        return LocalDateTime.parse(str, FORMATTER);
     }
 }

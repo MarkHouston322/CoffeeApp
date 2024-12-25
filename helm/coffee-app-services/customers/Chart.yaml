@@ -26,4 +26,4 @@ appVersion: "1.16.0"
 dependencies:
   - name: coffee-app-common
     version: 0.1.0
-    repository: file://../../coffee-app-common 
+    repository: file://../../coffee-app-common

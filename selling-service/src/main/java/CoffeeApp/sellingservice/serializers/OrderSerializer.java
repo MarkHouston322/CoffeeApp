@@ -2,25 +2,24 @@ package CoffeeApp.sellingservice.serializers;
 
 import CoffeeApp.sellingservice.dto.messages.ProceedOrderMessage;
 import com.google.gson.*;
-import lombok.AllArgsConstructor;
 import org.apache.kafka.common.serialization.Serializer;
-import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 
-@AllArgsConstructor
-@Component
 public class OrderSerializer implements Serializer<ProceedOrderMessage> {
 
     private final Gson gson;
 
+    public OrderSerializer() {
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
+    }
 
     @Override
     public byte[] serialize(String s, ProceedOrderMessage proceedOrderMessage) {
-        return convertOrderToJsonBytes(proceedOrderMessage);
-    }
-
-    private byte[] convertOrderToJsonBytes(ProceedOrderMessage proceedOrderMessage){
-       String json = gson.toJson(proceedOrderMessage);
-       return json.getBytes();
+        return gson.toJson(proceedOrderMessage).getBytes(StandardCharsets.UTF_8);
     }
 }

@@ -1,14 +1,14 @@
 package CoffeeApp.financialservice.in.Coffee.application.mappers;
 
 import CoffeeApp.financialservice.in.Coffee.application.dto.transactionDto.TransactionDto;
-import CoffeeApp.financialservice.in.Coffee.application.models.Transactions;
+import CoffeeApp.financialservice.in.Coffee.application.models.Transaction;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TransactionMapper {
 
-    public static TransactionDto mapToTransactionDto(Transactions transaction){
+    public static TransactionDto mapToTransactionDto(Transaction transaction){
         TransactionDto transactionDto = new TransactionDto();
         transactionDto.setDate(dateFormatter(transaction.getDate()));
         transactionDto.setType(transaction.getType());

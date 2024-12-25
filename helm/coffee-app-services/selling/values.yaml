@@ -8,7 +8,8 @@ dbHost: sellingdb
 replicaCount: 1
 
 image:
-  repository: biofinity/selling-service:V2.1
+  repository: biofinity/selling:V1.0
+  pullPolicy: Always
 
 containerPort: 8090
 

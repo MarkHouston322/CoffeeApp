@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>CoffeeApp</groupId>
-	<artifactId>customer-service</artifactId>
+	<artifactId>customers</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>customer-service</name>
+	<name>customers</name>
 	<description>Customer microservice in Coffee application</description>
 	<properties>
 		<java.version>17</java.version>
@@ -183,7 +183,7 @@
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.4.0</version>
+				<version>3.4.4</version>
 				<configuration>
 					<to>
 						<image>biofinity/${project.artifactId}:V1.0</image>

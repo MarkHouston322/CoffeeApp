@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: "storage-service"
+    name: "storage"
   config:
     import: "optional:configserver:http://localhost:8071/"
   datasource:
@@ -47,7 +47,7 @@ eureka:
 
 info:
   app:
-    name: "storage-service"
+    name: "storage"
     description: "Storage service"
     version: "1.0.0"
 

@@ -101,10 +101,10 @@
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.4.0</version>
+				<version>3.4.4</version>
 				<configuration>
 					<to>
-						<image>biofinity/${project.artifactId}:V1.4</image>
+						<image>biofinity/${project.artifactId}:V1.2</image>
 					</to>
 				</configuration>
 			</plugin>

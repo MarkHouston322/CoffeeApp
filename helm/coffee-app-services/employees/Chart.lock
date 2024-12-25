@@ -3,4 +3,4 @@ dependencies:
   repository: file://../../coffee-app-common
   version: 0.1.0
 digest: sha256:66e4fd70fcdf90058e3546e15c042ed5890b35214e4eb645ad934edd8e0ed13f
-generated: "2024-06-07T12:48:37.6679533+03:00"
+generated: "2024-12-16T12:57:52.7895233+07:00"

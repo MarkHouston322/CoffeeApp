@@ -70,6 +70,6 @@ public class Session {
     private Boolean sessionIsClosed;
 
     @OneToMany(mappedBy = "session")
-    private List<Transactions> transactions;
+    private List<Transaction> transactions;
 
 }

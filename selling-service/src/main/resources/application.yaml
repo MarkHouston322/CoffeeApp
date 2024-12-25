@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: "selling-service"
+    name: "selling"
   config:
     import: "optional:configserver:http://localhost:8071/"
   datasource:
@@ -13,11 +13,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true
-  #  kafka:
-  #    bootstrap-servers: localhost:9092
-  #    producer:
-  #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #      value-serializer: org.apache.kafka.common.serialization.StringSerializer
   cloud:
     function:
       definition: getGood;sellConfirmation;getCustomer;purchaseConfirmation;getSession
@@ -48,13 +43,7 @@ spring:
         sendRevenue-out-0:
           destination: send-revenue
 
-  #      kafka:
-  #        binder:
-  #          brokers:
-  #            - 0.0.0.0:9092
-
   kafka:
-    #    bootstrap-servers: kafka.default.svc.cluster.local:9092
     bootstrap-servers: localhost:9092
 
 
@@ -76,7 +65,6 @@ spring:
 
   data:
     redis:
-      #      host: redis-master.default.svc.cluster.local
       port: 6379
       host: localhost
 
@@ -90,11 +78,11 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: "http://eureka-server:8070/eureka/"
+      defaultZone: "http://localhost:8070/eureka/"
 
 info:
   app:
-    name: "Sells"
+    name: "selling"
     description: "Selling service"
     version: "1.0.0"
 

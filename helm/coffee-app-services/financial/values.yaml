@@ -8,7 +8,8 @@ dbHost: financialdb
 replicaCount: 1
 
 image:
-  repository: biofinity/financial-service:V1.0
+  repository: biofinity/financial:V1.0
+  pullPolicy: Always
 
 containerPort: 9010
 
@@ -26,4 +27,4 @@ otel_enabled: true
 rabbit_enabled: true
 redis_enabled: false
 db_enabled: true
-kafka_enabled: false
+kafka_enabled: true

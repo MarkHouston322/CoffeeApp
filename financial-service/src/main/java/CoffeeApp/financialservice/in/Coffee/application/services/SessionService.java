@@ -1,6 +1,7 @@
 package CoffeeApp.financialservice.in.Coffee.application.services;
 
 import CoffeeApp.financialservice.in.Coffee.application.dto.messages.EmployeeMessage;
+import CoffeeApp.financialservice.in.Coffee.application.dto.messages.ProceedSessionMessage;
 import CoffeeApp.financialservice.in.Coffee.application.dto.sessionDto.SessionDto;
 import CoffeeApp.financialservice.in.Coffee.application.dto.sessionDto.SessionResponse;
 import CoffeeApp.financialservice.in.Coffee.application.dto.messages.SessionMessage;
@@ -11,6 +12,7 @@ import CoffeeApp.financialservice.in.Coffee.application.repositories.SessionRepo
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ public class SessionService {
     private final SessionRepository sessionRepository;
     private final ModelMapper modelMapper;
     private final StreamBridge streamBridge;
+    private final KafkaTemplate<String, ProceedSessionMessage> sessionKafkaTemplate;
 
 
     public SessionResponse findAll() {
@@ -71,6 +74,7 @@ public class SessionService {
         sessionRepository.save(openSession);
         sendSession(openSession);
         sendEmployee(openSession);
+        sendSessionMessage(openSession,sessionKafkaTemplate);
         return true;
     }
 
@@ -120,6 +124,12 @@ public class SessionService {
         EmployeeMessage employeeMessage = new EmployeeMessage(session.getEmployeeUsername(), session.getSessionIsClosed());
         streamBridge.send("sendEmployee-out-0", employeeMessage);
     }
+
+    private void sendSessionMessage(Session session, KafkaTemplate<String,ProceedSessionMessage> sessionKafkaTemplate){
+        ProceedSessionMessage proceedSessionMessage = new ProceedSessionMessage(LocalDateTime.now(),session.getInitialCash());
+        sessionKafkaTemplate.send("sessions",proceedSessionMessage);
+    }
+
 
     private Session checkIfExists(int id) {
         return sessionRepository.findById(id).orElseThrow(

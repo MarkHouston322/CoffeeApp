@@ -1,5 +1,6 @@
 package CoffeeApp.financialservice.in.Coffee.application.services;
 
+import CoffeeApp.financialservice.in.Coffee.application.dto.messages.ProceedTransactionMessage;
 import CoffeeApp.financialservice.in.Coffee.application.dto.transactionDto.AddTransactionDto;
 import CoffeeApp.financialservice.in.Coffee.application.dto.messages.PaymentMessage;
 import CoffeeApp.financialservice.in.Coffee.application.dto.transactionDto.TransactionDto;
@@ -7,10 +8,11 @@ import CoffeeApp.financialservice.in.Coffee.application.dto.transactionDto.Trans
 import CoffeeApp.financialservice.in.Coffee.application.exceptions.ResourceNotFoundException;
 import CoffeeApp.financialservice.in.Coffee.application.mappers.TransactionMapper;
 import CoffeeApp.financialservice.in.Coffee.application.models.Session;
-import CoffeeApp.financialservice.in.Coffee.application.models.Transactions;
+import CoffeeApp.financialservice.in.Coffee.application.models.Transaction;
 import CoffeeApp.financialservice.in.Coffee.application.repositories.TransactionRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class TransactionsService {
     private final TransactionTypeService transactionTypeService;
     private final SessionService sessionService;
     private final TotalFinanceService totalFinanceService;
+    private final KafkaTemplate<String, ProceedTransactionMessage> transactionKafkaTemplate;
 
     public TransactionsResponse findAll(){
         return new TransactionsResponse(transactionRepository.findAll().stream().map(this::convertToTransactionDto)
@@ -34,7 +37,7 @@ public class TransactionsService {
     }
 
     public TransactionDto findById(Integer id){
-        Transactions transaction = checkIfExists(id);
+        Transaction transaction = checkIfExists(id);
         return TransactionMapper.mapToTransactionDto(transaction);
     }
 
@@ -44,29 +47,36 @@ public class TransactionsService {
     }
 
     @Transactional
-    public void paymentTransaction(PaymentMessage paymentMessage){
+    public void paymentTransaction(PaymentMessage paymentMessage) {
         Session session = sessionService.findCurrentSession();
-        if (paymentMessage.getTransactionType().equals("credit card")){
-            Transactions cardPayment = new Transactions(transactionTypeService.findByName("Card payment"), paymentMessage.getSum());
-            cardPayment.setDate(LocalDateTime.now());
-            cardPayment.setSession(session);
-            transactionRepository.save(cardPayment);
-            sessionService.cardPayment(session, cardPayment.getSum());
-            totalFinanceService.insertCard(cardPayment.getSum());
-        } else if (paymentMessage.getTransactionType().equals("cash")) {
-            Transactions cashPayment = new Transactions(transactionTypeService.findByName("Cash payment"), paymentMessage.getSum());
-            cashPayment.setDate(LocalDateTime.now());
-            cashPayment.setSession(session);
-            transactionRepository.save(cashPayment);
-            sessionService.cashPayment(session, cashPayment.getSum());
-            totalFinanceService.insertCash(cashPayment.getSum());
-        }
+        String transactionTypeString = paymentMessage.getTransactionType();
+        String transactionTypeName = switch (transactionTypeString) {
+            case "credit card" -> "Card payment";
+            case "cash"        -> "Cash payment";
+            default -> throw new IllegalArgumentException("Unknown transaction type: " + transactionTypeString);
+        };
+        Transaction transaction = new Transaction(
+                transactionTypeService.findByName(transactionTypeName),
+                paymentMessage.getSum()
+        );
+        transaction.setDate(LocalDateTime.now());
+        transaction.setSession(session);
+        transactionRepository.save(transaction);
 
+        int sum = transaction.getSum();
+        if ("credit card".equals(transactionTypeString)) {
+            sessionService.cardPayment(session, sum);
+            totalFinanceService.insertCard(sum);
+        } else if ("cash".equals(transactionTypeString)) {
+            sessionService.cashPayment(session, sum);
+            totalFinanceService.insertCash(sum);
+        }
+        sendTransactionMessage(transaction, transactionKafkaTemplate);
     }
 
     @Transactional
     public void createCashInflow(AddTransactionDto addTransactionDto){
-        Transactions cashInflow = convertToTransaction(addTransactionDto);
+        Transaction cashInflow = convertToTransaction(addTransactionDto);
         Session session = sessionService.findCurrentSession();
         cashInflow.setSession(session);
         cashInflow.setDate(LocalDateTime.now());
@@ -77,7 +87,7 @@ public class TransactionsService {
 
     @Transactional
     public void createCashWithdrawal(AddTransactionDto addTransactionDto){
-        Transactions cashWithdrawal = convertToTransaction(addTransactionDto);
+        Transaction cashWithdrawal = convertToTransaction(addTransactionDto);
         Session session = sessionService.findCurrentSession();
         cashWithdrawal.setSession(session);
         cashWithdrawal.setDate(LocalDateTime.now());
@@ -86,17 +96,22 @@ public class TransactionsService {
         sessionService.cashWithdrawal(session, cashWithdrawal.getSum());
     }
 
-    private Transactions checkIfExists(int id) {
+    private void sendTransactionMessage(Transaction transaction,KafkaTemplate<String, ProceedTransactionMessage> transactionKafkaTemplate){
+        ProceedTransactionMessage transactionMessage = new ProceedTransactionMessage(LocalDateTime.now(),transaction.getType().getName(), transaction.getSum());
+        transactionKafkaTemplate.send("transactions",transactionMessage);
+    }
+
+    private Transaction checkIfExists(int id) {
         return transactionRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Transaction ", "id", Integer.toString(id))
         );
     }
 
-    private TransactionDto convertToTransactionDto(Transactions transaction){
+    private TransactionDto convertToTransactionDto(Transaction transaction){
         return modelMapper.map(transaction, TransactionDto.class);
     }
 
-    private Transactions convertToTransaction(AddTransactionDto addTransactionDto){
-        return modelMapper.map(addTransactionDto, Transactions.class);
+    private Transaction convertToTransaction(AddTransactionDto addTransactionDto){
+        return modelMapper.map(addTransactionDto, Transaction.class);
     }
 }

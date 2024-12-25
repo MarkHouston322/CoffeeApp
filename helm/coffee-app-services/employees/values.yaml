@@ -8,7 +8,8 @@ dbHost: employeesdb
 replicaCount: 1
 
 image:
-  repository: biofinity/employees-service:V1.0
+  repository: biofinity/employees:V1.0
+  pullPolicy: Always
 
 containerPort: 9020
 
@@ -26,4 +27,4 @@ otel_enabled: true
 rabbit_enabled: true
 redis_enabled: false
 db_enabled: true
-kafla_enabled: false
+kafla_enabled: true

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -19,8 +20,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 
@@ -42,6 +42,21 @@ class BonusControllerTest {
         buildRequestBuilder(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string("<BonusResponse><bonuses/></BonusResponse>"));
+    }
+
+    @Test
+    void shouldReturnBonusDtoByIdAndStatus200() throws Exception {
+        // given
+        int bonusId = 1;
+        BonusDto bonusDto = new BonusDto(1000,500);
+        when(bonusService.findById(Mockito.anyInt())).thenReturn(bonusDto);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/bonus/{id}", bonusId);
+        // when and then
+        buildRequestBuilder(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content()
+                        .string("{\"edge\":1000,\"value\":500}"));
+        verify(bonusService).findById(bonusId);
     }
 
     private ResultActions buildRequestBuilder(MockHttpServletRequestBuilder requestBuilder) throws Exception {

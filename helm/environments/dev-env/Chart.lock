@@ -1,0 +1,30 @@
+dependencies:
+- name: coffee-app-common
+  repository: file://../../coffee-app-common
+  version: 0.1.0
+- name: config-server
+  repository: file://../../coffee-app-services/config-server
+  version: 0.1.0
+- name: customers
+  repository: file://../../coffee-app-services/customers
+  version: 0.1.0
+- name: employees
+  repository: file://../../coffee-app-services/employees
+  version: 0.1.0
+- name: eureka-server
+  repository: file://../../coffee-app-services/eureka-server
+  version: 0.1.0
+- name: financial
+  repository: file://../../coffee-app-services/financial
+  version: 0.1.0
+- name: gateway-server
+  repository: file://../../coffee-app-services/gateway-server
+  version: 0.1.0
+- name: selling
+  repository: file://../../coffee-app-services/selling
+  version: 0.1.0
+- name: storage
+  repository: file://../../coffee-app-services/storage
+  version: 0.1.0
+digest: sha256:caa3d3540d965ecb742b5bf52e6dac722fd631e6373f1817b27f8a8a220f9420
+generated: "2024-12-16T13:17:36.7820752+07:00"

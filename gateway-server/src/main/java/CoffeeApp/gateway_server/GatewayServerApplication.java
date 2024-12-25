@@ -21,29 +21,29 @@ public class GatewayServerApplication {
 	public RouteLocator eazyBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
 		return routeLocatorBuilder.routes()
 				.route(p -> p
-						.path("/coffee-app/customer-service/**")
-						.filters(f -> f.rewritePath("/coffee-app/customer-service/(?<segment>.*)", "/${segment}")
+						.path("/coffee-app/customers/**")
+						.filters(f -> f.rewritePath("/coffee-app/customers/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
 						.uri("lb://CUSTOMERS"))
 
 				.route(p -> p
-						.path("/coffee-app/employees-service/**")
-						.filters(f -> f.rewritePath("/coffee-app/employees-service/(?<segment>.*)", "/${segment}")
+						.path("/coffee-app/employees/**")
+						.filters(f -> f.rewritePath("/coffee-app/employees/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
 						.uri("lb://EMPLOYEES"))
 				.route(p -> p
-						.path("/coffee-app/financial-service/**")
-						.filters(f -> f.rewritePath("/coffee-app/financial-service/(?<segment>.*)", "/${segment}")
+						.path("/coffee-app/financial/**")
+						.filters(f -> f.rewritePath("/coffee-app/financial/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
 						.uri("lb://FINANCIAL"))
 				.route(p -> p
-						.path("/coffee-app/selling-service/**")
-						.filters(f -> f.rewritePath("/coffee-app/selling-service/(?<segment>.*)", "/${segment}")
+						.path("/coffee-app/selling/**")
+						.filters(f -> f.rewritePath("/coffee-app/selling/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
 						.uri("lb://SELLING"))
 				.route(p -> p
-						.path("/coffee-app/storage-service/**")
-						.filters(f -> f.rewritePath("/coffee-app/storage-service/(?<segment>.*)", "/${segment}")
+						.path("/coffee-app/storage/**")
+						.filters(f -> f.rewritePath("/coffee-app/storage/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
 						.uri("lb://STORAGE"))
 				.build();}

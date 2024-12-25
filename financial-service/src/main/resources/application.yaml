@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: "financial-service"
+    name: "financial"
   config:
     import: "optional:configserver:http://localhost:8071/"
   datasource:
@@ -26,6 +26,8 @@ spring:
         sendEmployee-out-0:
           destination: send-employee
 
+  kafka:
+    bootstrap-servers: localhost:9092
 
   rabbitmq:
     host: localhost
@@ -45,7 +47,7 @@ eureka:
 
 info:
   app:
-    name: "financial-service"
+    name: "financial"
     description: "Financial service"
     version: "1.0.0"
 

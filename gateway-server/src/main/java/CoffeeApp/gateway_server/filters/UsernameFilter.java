@@ -1,34 +1,54 @@
 package CoffeeApp.gateway_server.filters;
 
-import org.keycloak.representations.AccessToken;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 
 @Configuration
-public class UsernameFilter extends AbstractGatewayFilterFactory<Object> {
+public class UsernameFilter implements GlobalFilter, Ordered {
 
     @Override
-    public GatewayFilter apply(Object config) {
-        return (exchange, chain) -> ReactiveSecurityContextHolder.getContext()
-                .filter(c -> c.getAuthentication() instanceof KeycloakAuthenticationToken)
-                .map(c -> (KeycloakAuthenticationToken) c.getAuthentication())
-                .doOnNext(keycloakAuthenticationToken -> {
-                    AccessToken accessToken = keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext().getToken();
-                    String tokenValue = accessToken.toString();
-                    mutateRequest(exchange, tokenValue);
-                })
-                .then(chain.filter(exchange));
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .flatMap(authentication -> {
+                    if (authentication != null && authentication.isAuthenticated()) {
+                        String preferredUsername = extractPreferredUsername(authentication);
+
+                        if (preferredUsername != null) {
+                            ServerHttpRequest modifiedRequest = exchange.getRequest()
+                                    .mutate()
+                                    .header("X-Preferred-Username", preferredUsername)
+                                    .build();
+
+                            ServerWebExchange modifiedExchange = exchange.mutate()
+                                    .request(modifiedRequest)
+                                    .build();
+
+                            return chain.filter(modifiedExchange);
+                        }
+                    }
+                    return chain.filter(exchange);
+                });
     }
 
-    private void mutateRequest(ServerWebExchange exchange, String username) {
-        ServerHttpRequest newRequest = exchange.getRequest().mutate()
-                .header("Preferred-Username", username)
-                .build();
-        exchange.mutate().request(newRequest).build();
+    private String extractPreferredUsername(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            return jwt.getClaimAsString("preferred_username");
+        }
+        return null;
+    }
+
+    @Override
+    public int getOrder() {
+        return 1000;
     }
 }

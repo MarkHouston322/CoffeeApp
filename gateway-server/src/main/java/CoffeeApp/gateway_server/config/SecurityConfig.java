@@ -21,11 +21,12 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity serverHttpSecurity){
         serverHttpSecurity.authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/coffee-app/customer-service/**",
-                                "/coffee-app/employees-service/**",
-                                "/coffee-app/financial-service/**",
-                                "/coffee-app/selling-service/**",
-                                "/coffee-app/storage-service/**").hasRole("EMPLOYEE"))
+                        .pathMatchers("/coffee-app/customers/**",
+                                "/coffee-app/employees/**",
+                                "/coffee-app/financial/**",
+                                "/coffee-app/selling/**",
+                                "/coffee-app/storage/**").hasRole("EMPLOYEE")
+                        .anyExchange().authenticated())
                 .oauth2ResourceServer(oAuth2ResourceServerSpec -> oAuth2ResourceServerSpec
                         .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())));
         serverHttpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable);
@@ -37,7 +38,6 @@ public class SecurityConfig {
                 new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter
                 (new KeycloakRoleConverter());
-        jwtAuthenticationConverter.setPrincipalClaimName("preferred_username");
         return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
     }
 }

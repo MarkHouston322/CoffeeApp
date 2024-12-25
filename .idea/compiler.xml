@@ -18,11 +18,14 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="auth-server" target="17" />
+      <module name="springsecsection_15" target="21" />
       <module name="statistic-service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="auth-server" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="customer-service" options="-parameters" />
       <module name="employees-service" options="-parameters" />
@@ -30,6 +33,7 @@
       <module name="financial-service" options="-parameters" />
       <module name="gateway-server" options="-parameters" />
       <module name="selling-service" options="-parameters" />
+      <module name="springsecsection_15" options="-parameters" />
       <module name="statistic-service" options="-parameters" />
       <module name="storage-service" options="-parameters" />
     </option>

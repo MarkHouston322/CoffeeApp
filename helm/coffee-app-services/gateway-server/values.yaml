@@ -6,7 +6,8 @@ appName: gatewayserver
 replicaCount: 1
 
 image:
-  repository: biofinity/gateway-server:V1.4
+  repository: biofinity/gateway-server:V1.2
+  pullPolicy: Always
 
 containerPort: 8072
 

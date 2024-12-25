@@ -447,6 +447,32 @@ initdbScripts:
     )
     ENGINE = Kafka('kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092', 'drinks', 'clickhouse', 'JSONEachRow')
     settings kafka_thread_per_consumer = 0, kafka_num_consumers = 1;
+    
+    CREATE TABLE sessions
+    (
+        revenue Int32,
+        closed_time DateTime
+    )
+    ENGINE = Kafka('kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092', 'sessions', 'clickhouse', 'JSONEachRow')
+    settings kafka_thread_per_consumer = 0, kafka_num_consumers = 1;
+    
+    CREATE TABLE transactions
+    (
+        date_time DateTime,
+        transaction_type String,
+        sum Int32
+    )
+    ENGINE = Kafka('kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092', 'transactions', 'clickhouse', 'JSONEachRow')
+    settings kafka_thread_per_consumer = 0, kafka_num_consumers = 1;
+    
+    CREATE TABLE salaries
+    (
+        date_time DateTime,
+        employee_name String,
+        total Float32
+    )
+    ENGINE = Kafka('kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092', 'salaries', 'clickhouse', 'JSONEachRow')
+    settings kafka_thread_per_consumer = 0, kafka_num_consumers = 1;
     SQL
 ## @param initdbScriptsSecret ConfigMap with the initdb scripts (Note: Overrides `initdbScripts`)
 ##

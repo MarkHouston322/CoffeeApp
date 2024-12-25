@@ -2,24 +2,25 @@ package CoffeeApp.sellingservice.serializers;
 
 import CoffeeApp.sellingservice.dto.messages.SoldDrinkMessage;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
+import com.google.gson.GsonBuilder;
 import org.apache.kafka.common.serialization.Serializer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@AllArgsConstructor
-@Component
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+
 public class SoldDrinkSerializer implements Serializer<SoldDrinkMessage> {
 
     private final Gson gson;
 
-    @Override
-    public byte[] serialize(String s, SoldDrinkMessage soldDrinkMessage) {
-        return convertSoldDrinkToJsonBytes(soldDrinkMessage);
+    public SoldDrinkSerializer() {
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
     }
 
-    private byte[] convertSoldDrinkToJsonBytes(SoldDrinkMessage soldDrinkMessage){
-        String json = gson.toJson(soldDrinkMessage);
-        return json.getBytes();
+    @Override
+    public byte[] serialize(String s, SoldDrinkMessage soldDrinkMessage) {
+        return gson.toJson(soldDrinkMessage).getBytes(StandardCharsets.UTF_8);
     }
+
 }
