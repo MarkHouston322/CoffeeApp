@@ -9,8 +9,9 @@ import CoffeeApp.storageservice.dto.itemDto.AddItemDto;
 import CoffeeApp.storageservice.dto.itemDto.ItemInDto;
 import CoffeeApp.storageservice.dto.messages.GoodMessage;
 import CoffeeApp.storageservice.exceptions.ResourceNotFoundException;
-import CoffeeApp.storageservice.interfaces.ContainIngredients;
+import CoffeeApp.storageservice.interfaces.ContainGoods;
 import CoffeeApp.storageservice.mappers.AcceptanceMapper;
+import CoffeeApp.storageservice.mappers.WriteOffMapper;
 import CoffeeApp.storageservice.models.Acceptance;
 import CoffeeApp.storageservice.models.ingredient.Ingredient;
 import CoffeeApp.storageservice.models.ingredient.IngredientInAcceptance;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @AllArgsConstructor
-public class AcceptanceService implements ContainIngredients {
+public class AcceptanceService implements ContainGoods {
 
     private final AcceptanceRepository acceptanceRepository;
     private final IngredientService ingredientService;
@@ -57,7 +58,7 @@ public class AcceptanceService implements ContainIngredients {
 
     public AcceptanceDto findById(Integer id){
         Acceptance acceptance = checkIfExists(id);
-        return AcceptanceMapper.convertToAcceptanceDto(acceptance);
+        return convertToAcceptanceDto(acceptance);
     }
 
     public AcceptanceResponse findAll(){
@@ -95,7 +96,7 @@ public class AcceptanceService implements ContainIngredients {
     }
 
     @Transactional
-    public void addAcceptanceFromFileV2(MultipartFile file, Map<String, String> isIngredient, String surchargeRatio){
+    public void addAcceptanceFromFile(MultipartFile file, Map<String, String> isIngredient, String surchargeRatio){
         List<AcceptanceFromFileDto> goods = wordDocumentParser.parseDocument(file);
         List<AddItemDto> items = new ArrayList<>();
         for (Map.Entry<String,String> entry: isIngredient.entrySet()){
@@ -129,7 +130,7 @@ public class AcceptanceService implements ContainIngredients {
 
     @Override
     public GoodsWrapperForWriteOff checkGoods(Map<String, String> goods, IngredientService ingredientService, ItemService itemService) throws ExecutionException, InterruptedException {
-        return ContainIngredients.super.checkGoods(goods, ingredientService,itemService);
+        return ContainGoods.super.checkGoods(goods, ingredientService,itemService);
     }
 
 
@@ -186,7 +187,7 @@ public class AcceptanceService implements ContainIngredients {
     }
 
     private AcceptanceDto convertToAcceptanceDto(Acceptance acceptance){
-        return modelMapper.map(acceptance, AcceptanceDto.class);
+        return AcceptanceMapper.convertToAcceptanceDto(acceptance);
     }
 
     private Acceptance convertToAcceptance(AddAcceptanceDto addAcceptanceDto){

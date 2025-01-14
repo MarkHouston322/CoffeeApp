@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ContainIngredientsTest {
+class ContainGoodsTest {
 
     @InjectMocks
     private AcceptanceService acceptanceService;

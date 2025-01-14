@@ -1,4 +1,4 @@
-package CoffeeApp.sellingservice.dto.goodDto;
+package CoffeeApp.sellingservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

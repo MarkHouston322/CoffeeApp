@@ -2,10 +2,12 @@ package CoffeeApp.storageservice.mappers;
 
 import CoffeeApp.storageservice.dto.writeOffDto.WriteOffDto;
 import CoffeeApp.storageservice.models.WriteOff;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Component
 public class WriteOffMapper {
 
 

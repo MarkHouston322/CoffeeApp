@@ -4,20 +4,17 @@ import CoffeeApp.storageservice.exceptions.NullOrEmptyParamException;
 import CoffeeApp.storageservice.exceptions.ResourceNotFoundException;
 import CoffeeApp.storageservice.models.ingredient.Ingredient;
 import CoffeeApp.storageservice.models.item.Item;
-import CoffeeApp.storageservice.repositories.ingredientRepository.IngredientRepository;
-import CoffeeApp.storageservice.repositories.itemRepository.ItemRepository;
 import CoffeeApp.storageservice.services.ingredientService.IngredientService;
 import CoffeeApp.storageservice.services.itemService.ItemService;
 import CoffeeApp.storageservice.util.GoodsWrapperForWriteOff;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 
-public interface ContainIngredients {
+public interface ContainGoods {
 
     default GoodsWrapperForWriteOff checkGoods(Map<String, String> goods, IngredientService ingredientService, ItemService itemService)
             throws InterruptedException, ExecutionException {

@@ -16,7 +16,6 @@ import CoffeeApp.storageservice.models.item.ItemInAcceptance;
 import CoffeeApp.storageservice.projections.IngredientProjection;
 import CoffeeApp.storageservice.projections.ItemProjection;
 import CoffeeApp.storageservice.repositories.AcceptanceRepository;
-import CoffeeApp.storageservice.services.ingredientService.IngredientInAcceptanceService;
 import CoffeeApp.storageservice.services.ingredientService.IngredientService;
 import CoffeeApp.storageservice.services.itemService.ItemInAcceptanceService;
 import CoffeeApp.storageservice.services.itemService.ItemService;
@@ -53,9 +52,6 @@ class AcceptanceServiceTest {
 
     @Mock
     private ItemService itemService;
-
-    @Mock
-    private IngredientInAcceptanceService ingredientInAcceptanceService;
 
     @Mock
     private ItemInAcceptanceService itemInAcceptanceService;
@@ -105,11 +101,9 @@ class AcceptanceServiceTest {
         Acceptance acceptance1 = new Acceptance(LocalDateTime.now(), "Comment", 1000f);
         Acceptance acceptance2 = new Acceptance(LocalDateTime.now(), "Pause", 2000f);
         List<Acceptance> acceptances = Arrays.asList(acceptance1, acceptance2);
-        AcceptanceDto acceptanceDto1 = new AcceptanceDto("acceptance1.getDate()", "Comment", 1000f);
-        AcceptanceDto acceptanceDto2 = new AcceptanceDto("acceptance2.getDate()", "Comment", 1000f);
+        AcceptanceDto acceptanceDto1 = new AcceptanceDto(null,"14.01.2025 18:13", "Comment",null, 1000f);
+        AcceptanceDto acceptanceDto2 = new AcceptanceDto(null,"14.01.2025 18:13", "Pause",null, 1000f);
         when(acceptanceRepository.findAll()).thenReturn(acceptances);
-        when(modelMapper.map(acceptance1, AcceptanceDto.class)).thenReturn(acceptanceDto1);
-        when(modelMapper.map(acceptance2, AcceptanceDto.class)).thenReturn(acceptanceDto2);
         // when
         AcceptanceResponse response = acceptanceService.findAll();
         // then
@@ -280,7 +274,7 @@ class AcceptanceServiceTest {
         when(itemService.calculateCostFromFile(Mockito.anyList())).thenReturn(120f);
         when(acceptanceMapper.convertToAddItemInDto(Mockito.any(),Mockito.anyString())).thenReturn(addItemDto);
         // when
-        acceptanceService.addAcceptanceFromFileV2(mockFile, isIngredient, surchargeRatio);
+        acceptanceService.addAcceptanceFromFile(mockFile, isIngredient, surchargeRatio);
         // then
         verify(wordDocumentParser).parseDocument(mockFile);
         verify(itemService).calculateCostFromFile(Mockito.anyList());

@@ -38,7 +38,7 @@ public class TransactionsService {
 
     public TransactionDto findById(Integer id){
         Transaction transaction = checkIfExists(id);
-        return TransactionMapper.mapToTransactionDto(transaction);
+        return convertToTransactionDto(transaction);
     }
 
     public TransactionsResponse findByType(String name){
@@ -109,7 +109,7 @@ public class TransactionsService {
     }
 
     private TransactionDto convertToTransactionDto(Transaction transaction){
-        return modelMapper.map(transaction, TransactionDto.class);
+        return TransactionMapper.mapToTransactionDto(transaction);
     }
 
     private Transaction convertToTransaction(AddTransactionDto addTransactionDto){

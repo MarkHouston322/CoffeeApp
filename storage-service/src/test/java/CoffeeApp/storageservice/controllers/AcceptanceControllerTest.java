@@ -49,7 +49,7 @@ class AcceptanceControllerTest {
     void shouldReturnAcceptanceDtoByIdAndStatus200() throws Exception {
         // given
         int acceptanceId = 1;
-        AcceptanceDto acceptanceDto = new AcceptanceDto("date","comment",1000f);
+        AcceptanceDto acceptanceDto = new AcceptanceDto(null,"date","comment",null,1000f);
         when(acceptanceService.findById(Mockito.anyInt())).thenReturn(acceptanceDto);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/acceptances/{id}", acceptanceId);
         // when & then
@@ -112,7 +112,7 @@ class AcceptanceControllerTest {
     @Test
     void shouldMakeAcceptanceFromFileAndReturnStatus201() throws Exception {
         // given
-        doNothing().when(acceptanceService).addAcceptanceFromFileV2(Mockito.any(), Mockito.anyMap(), Mockito.anyString());
+        doNothing().when(acceptanceService).addAcceptanceFromFile(Mockito.any(), Mockito.anyMap(), Mockito.anyString());
         MockMultipartFile file = new MockMultipartFile("file", "test.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "test content".getBytes());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/acceptances/add/file/{surchargeRatio}", "1.5")

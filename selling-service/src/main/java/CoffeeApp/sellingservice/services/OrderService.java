@@ -1,7 +1,7 @@
 package CoffeeApp.sellingservice.services;
 
 import CoffeeApp.sellingservice.dto.*;
-import CoffeeApp.sellingservice.dto.goodDto.GoodInOrderDto;
+import CoffeeApp.sellingservice.dto.GoodInOrderDto;
 import CoffeeApp.sellingservice.dto.messages.GoodMessage;
 import CoffeeApp.sellingservice.dto.messages.*;
 import CoffeeApp.sellingservice.dto.orderDto.AddOrderDto;
@@ -18,7 +18,6 @@ import CoffeeApp.sellingservice.projections.GoodProjection;
 import CoffeeApp.sellingservice.repositories.OrderRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,13 +42,14 @@ public class OrderService {
     private final GoodInOrderService goodInOrderService;
     private final PaymentMethodService paymentMethodService;
     private final ModelMapper modelMapper;
+    private final OrderMapper orderMapper;
     private final StreamBridge streamBridge;
     private final KafkaTemplate<String, ProceedOrderMessage> orderKafkaTemplate;
     private final KafkaTemplate<String, SoldDrinkMessage> soldDrinkKafkaTemplate;
 
     public OrderDto findById(Integer id) {
         Order order = checkIfExists(id);
-        return OrderMapper.mapToOrderDto(order);
+        return convertToOrderDto(order);
     }
 
     public OrderResponse findAll() {
@@ -240,7 +239,7 @@ public class OrderService {
     }
 
     private OrderDto convertToOrderDto(Order order) {
-        return modelMapper.map(order, OrderDto.class);
+        return OrderMapper.mapToOrderDto(order);
     }
 
     private Order convertToOrder(AddOrderDto addOrderDto) {

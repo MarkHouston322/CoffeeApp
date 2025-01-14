@@ -14,6 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomerResponse {
 
-
     private List<CustomerDto> customers;
 }

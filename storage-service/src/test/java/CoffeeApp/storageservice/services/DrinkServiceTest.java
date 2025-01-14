@@ -7,7 +7,7 @@ import CoffeeApp.storageservice.dto.ingredientDto.IngredientInDto;
 import CoffeeApp.storageservice.dto.messages.GoodMessage;
 import CoffeeApp.storageservice.exceptions.ResourceNotFoundException;
 import CoffeeApp.storageservice.exceptions.alreadyExistsExceptions.DrinkAlreadyExistsException;
-import CoffeeApp.storageservice.interfaces.ContainIngredients;
+import CoffeeApp.storageservice.interfaces.ContainGoods;
 import CoffeeApp.storageservice.models.Category;
 import CoffeeApp.storageservice.models.Drink;
 import CoffeeApp.storageservice.models.ingredient.Ingredient;
@@ -56,7 +56,7 @@ class DrinkServiceTest {
     private ItemService itemService;
 
     @Mock
-    private ContainIngredients containIngredients;
+    private ContainGoods containGoods;
 
     @Mock
     private StreamBridge streamBridge;
@@ -134,7 +134,7 @@ class DrinkServiceTest {
 
         when(drinkRepository.findByName(drinkDto.getName())).thenReturn(Optional.empty());
         setModelMapper(drinkDto);
-        when(containIngredients.checkGoods(ingredients, ingredientService, itemService)).thenReturn(new GoodsWrapperForWriteOff(new ConcurrentHashMap<>(),new ConcurrentHashMap<>()));
+        when(containGoods.checkGoods(ingredients, ingredientService, itemService)).thenReturn(new GoodsWrapperForWriteOff(new ConcurrentHashMap<>(),new ConcurrentHashMap<>()));
         when(ingredientService.calculateCost(ingredients)).thenReturn(100.0f);
         doNothing().when(ingredientInDrinkService).addIngredientInDrink(Mockito.any());
         // when

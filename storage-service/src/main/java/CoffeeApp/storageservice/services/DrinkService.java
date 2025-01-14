@@ -1,7 +1,7 @@
 package CoffeeApp.storageservice.services;
 
 import CoffeeApp.storageservice.dto.messages.GoodMessage;
-import CoffeeApp.storageservice.interfaces.ContainIngredients;
+import CoffeeApp.storageservice.interfaces.ContainGoods;
 import CoffeeApp.storageservice.projections.IngredientProjection;
 import CoffeeApp.storageservice.dto.drinkDto.*;
 import CoffeeApp.storageservice.dto.ingredientDto.IngredientInDto;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @AllArgsConstructor
-public class DrinkService implements ContainIngredients {
+public class DrinkService implements ContainGoods {
 
     private final DrinkRepository drinkRepository;
     private final IngredientInDrinkService ingredientInDrinkService;
@@ -151,7 +151,7 @@ public class DrinkService implements ContainIngredients {
 
     @Override
     public GoodsWrapperForWriteOff checkGoods(Map<String, String> ingredients, IngredientService ingredientService, ItemService itemService) throws ExecutionException, InterruptedException {
-        return ContainIngredients.super.checkGoods(ingredients, ingredientService,itemService);
+        return ContainGoods.super.checkGoods(ingredients, ingredientService,itemService);
     }
 
     private Drink checkForSelling(String name){

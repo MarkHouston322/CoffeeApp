@@ -6,7 +6,7 @@ import CoffeeApp.storageservice.dto.writeOffDto.AddWriteOffDto;
 import CoffeeApp.storageservice.dto.writeOffDto.WriteOffDto;
 import CoffeeApp.storageservice.dto.writeOffDto.WriteOffResponse;
 import CoffeeApp.storageservice.exceptions.ResourceNotFoundException;
-import CoffeeApp.storageservice.interfaces.ContainIngredients;
+import CoffeeApp.storageservice.interfaces.ContainGoods;
 import CoffeeApp.storageservice.mappers.WriteOffMapper;
 import CoffeeApp.storageservice.models.*;
 import CoffeeApp.storageservice.models.ingredient.Ingredient;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @AllArgsConstructor
-public class WriteOffService implements ContainIngredients {
+public class WriteOffService implements ContainGoods {
 
     private final WriteOffRepository writeOffRepository;
     private final IngredientService ingredientService;
@@ -45,12 +45,13 @@ public class WriteOffService implements ContainIngredients {
     private final IngredientInWriteOffService ingredientInWriteOffService;
     private final ItemInWriteOffService itemInWriteOffService;
     private final ModelMapper modelMapper;
+    private final WriteOffMapper writeOffMapper;
     private final ItemInFridgeService itemInFridgeService;
 
 
     public WriteOffDto findById(Integer id){
         WriteOff writeOff = checkIfExists(id);
-        return WriteOffMapper.mapToWriteOffDto(writeOff);
+        return convertToWriteOffDto(writeOff);
     }
 
     public WriteOffResponse findAll(){
@@ -130,11 +131,11 @@ public class WriteOffService implements ContainIngredients {
 
     @Override
     public GoodsWrapperForWriteOff checkGoods(Map<String, String> goods, IngredientService ingredientService, ItemService itemService) throws ExecutionException, InterruptedException {
-        return ContainIngredients.super.checkGoods(goods, ingredientService, itemService);
+        return ContainGoods.super.checkGoods(goods, ingredientService, itemService);
     }
 
     private WriteOffDto convertToWriteOffDto(WriteOff writeOff){
-        return modelMapper.map(writeOff, WriteOffDto.class);
+        return WriteOffMapper.mapToWriteOffDto(writeOff);
     }
 
     private WriteOff convertToWriteOff(AddWriteOffDto addWriteOffDto){

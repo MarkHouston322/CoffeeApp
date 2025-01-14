@@ -102,8 +102,6 @@ class WriteOffServiceTest {
         WriteOffDto writeOffDto1 = new WriteOffDto(writeOff1.getId(),"Date",writeOff1.getAcceptance(),"Reason",1000f);
         WriteOffDto writeOffDto2 = new WriteOffDto(writeOff2.getId(),"Date",writeOff2.getAcceptance(),"Why",2000f);
         when(writeOffRepository.findAll()).thenReturn(writeOffs);
-        when(modelMapper.map(writeOff1,WriteOffDto.class)).thenReturn(writeOffDto1);
-        when(modelMapper.map(writeOff2,WriteOffDto.class)).thenReturn(writeOffDto2);
         // when
         WriteOffResponse response = writeOffService.findAll();
         // then

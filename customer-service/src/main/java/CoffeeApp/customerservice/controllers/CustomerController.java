@@ -29,7 +29,7 @@ import java.util.Map;
 @Validated
 @Tag(
         name = "CRUD REST APIs for Customers in Coffee App",
-        description = "CRUD REST APIs in Coffee App to CREATE, UPDATE, FETCH AND DELETE account details"
+        description = "CRUD REST APIs in Coffee App to CREATE, UPDATE, FETCH AND DELETE customer details"
 )
 public class CustomerController {
 

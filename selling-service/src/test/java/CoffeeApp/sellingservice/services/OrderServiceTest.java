@@ -1,6 +1,6 @@
 package CoffeeApp.sellingservice.services;
 
-import CoffeeApp.sellingservice.dto.goodDto.GoodInOrderDto;
+import CoffeeApp.sellingservice.dto.GoodInOrderDto;
 import CoffeeApp.sellingservice.dto.messages.GoodMessage;
 import CoffeeApp.sellingservice.dto.messages.ProceedOrderMessage;
 import CoffeeApp.sellingservice.dto.orderDto.AddOrderDto;
@@ -9,7 +9,6 @@ import CoffeeApp.sellingservice.dto.orderDto.OrderResponse;
 import CoffeeApp.sellingservice.dto.paymentMethodDto.PaymentMethodDto;
 import CoffeeApp.sellingservice.exceptions.ResourceNotFoundException;
 import CoffeeApp.sellingservice.exceptions.SessionIsClosedException;
-import CoffeeApp.sellingservice.mappers.OrderMapper;
 import CoffeeApp.sellingservice.models.GoodInOrder;
 import CoffeeApp.sellingservice.models.Order;
 import CoffeeApp.sellingservice.models.PaymentMethod;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -38,7 +36,6 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

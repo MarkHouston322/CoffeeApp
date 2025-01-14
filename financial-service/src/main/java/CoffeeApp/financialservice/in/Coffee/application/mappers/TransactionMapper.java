@@ -2,10 +2,12 @@ package CoffeeApp.financialservice.in.Coffee.application.mappers;
 
 import CoffeeApp.financialservice.in.Coffee.application.dto.transactionDto.TransactionDto;
 import CoffeeApp.financialservice.in.Coffee.application.models.Transaction;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Component
 public class TransactionMapper {
 
     public static TransactionDto mapToTransactionDto(Transaction transaction){
