@@ -28,56 +28,49 @@ public class ItemInFridgeService {
     private final ItemService itemService;
     private final ModelMapper modelMapper;
 
-    public ItemInFridgeDto findById(Integer id){
+    public ItemInFridgeDto findById(Integer id) {
         ItemInFridge item = checkIfExists(id);
         return convertToItemInFridgeDto(item);
     }
 
-    public ItemInFridgeResponse findAll(){
+    public ItemInFridgeResponse findAll() {
         return new ItemInFridgeResponse(itemInFridgeRepository.findAll().stream().map(this::convertToItemInFridgeDto)
                 .collect(Collectors.toList()));
     }
 
-    public ItemInFridgeResponse findByItem(Item item){
-        return new ItemInFridgeResponse(itemInFridgeRepository.findByItem(item).stream().map(this::convertToItemInFridgeDto)
+    public ItemInFridgeResponse findByItemName(String name) {
+        return new ItemInFridgeResponse(itemInFridgeRepository.findByItemName(name).stream().map(this::convertToItemInFridgeDto)
                 .collect(Collectors.toList()));
     }
 
-    public ItemInFridgeResponse getItemsFromFridge(){
+    public ItemInFridgeResponse getItemsFromFridge() {
         return new ItemInFridgeResponse(itemInFridgeRepository.getItemsInFridge().stream().map(this::convertToItemInFridgeDto)
                 .collect(Collectors.toList()));
     }
 
     @Transactional
-    public void addItemToFridge(AddItemInFridgeDto addItemInFridgeDto){
-        if (addItemInFridgeDto != null){
-            ItemInFridge itemToAdd = convertToItemInFridge(addItemInFridgeDto);
-            itemToAdd.setStorageTime(itemToAdd.getStorageTime() * 3_600_000);
-            itemToAdd.setPlaceDate(new Date());
-            itemToAdd.setIsSold(false);
-            itemToAdd.setExpired(false);
-            itemInFridgeRepository.save(itemToAdd);
-        }
+    public void addItemToFridge(AddItemInFridgeDto addItemInFridgeDto) {
+        ItemInFridge itemToAdd = convertToItemInFridge(addItemInFridgeDto);
+        itemToAdd.setStorageTime(itemToAdd.getStorageTime() * 3_600_000);
+        itemToAdd.setPlaceDate(new Date());
+        itemToAdd.setIsSold(false);
+        itemToAdd.setExpired(false);
+        itemInFridgeRepository.save(itemToAdd);
     }
 
     @Transactional
-    public boolean removeItemFromFridge(Integer id){
-        boolean isRemoved = false;
+    public void removeItemFromFridge(Integer id) {
         Item itemToRemove = checkIfExists(id).getItem();
         ItemInFridge itemInFridge = isItemInFridge(itemToRemove);
-        if (itemInFridge != null){
-            itemInFridge.setIsSold(true);
-            itemInFridge.setSoldDate(LocalDateTime.now());
-            isRemoved = true;
-        }
-        return isRemoved;
+        itemInFridge.setIsSold(true);
+        itemInFridge.setSoldDate(LocalDateTime.now());
     }
 
-    public void checkForExpiration(){
+    public void checkForExpiration() {
         List<ItemInFridge> items = itemInFridgeRepository.getItemsInFridge();
-        for (ItemInFridge item : items){
+        for (ItemInFridge item : items) {
             long passedTime = Math.abs(new Date().getTime() - item.getPlaceDate().getTime());
-            if (passedTime >= item.getStorageTime()){
+            if (passedTime >= item.getStorageTime()) {
                 item.setExpired(true);
                 System.out.println("Item with name: " + item.getItem().getName() + " is expired");
                 // заглушка уведомлений
@@ -85,43 +78,45 @@ public class ItemInFridgeService {
         }
     }
 
-    public void writeOffItemsFromFridge(Map<String, String> items){
-        for (Map.Entry<String,String> entry : items.entrySet()){
+    public void writeOffItemsFromFridge(Map<String, String> items) {
+        for (Map.Entry<String, String> entry : items.entrySet()) {
             removeItemsFromFridgeIfExists(entry.getKey());
         }
     }
 
-    public void removeItemsFromFridgeIfExists (String name){
+    public void removeItemsFromFridgeIfExists(String name) {
         int itemId = itemService.findByName(name).getId();
         try {
             int itemInFridgeId = findItemInFridgeIdByItemId(itemId);
             removeItemFromFridge(itemInFridgeId);
-        } catch (ResourceNotFoundException ignored){}
+        } catch (ResourceNotFoundException ignored) {
+        }
     }
 
-    public int findItemInFridgeIdByItemId(Integer itemId){
+    public int findItemInFridgeIdByItemId(Integer itemId) {
         Optional<ItemInFridge> itemInFridge = itemInFridgeRepository.findByItemId(itemId);
-        if (itemInFridge.isPresent()){
-            return  itemInFridge.get().getId();
+        if (itemInFridge.isPresent()) {
+            return itemInFridge.get().getId();
         } else {
             throw new ResourceNotFoundException("Item in fridge", "name", Integer.toString(itemId));
         }
     }
 
-    private ItemInFridge isItemInFridge(Item item){
-        Optional<ItemInFridge> optional = itemInFridgeRepository.isItemInFridge(item);
-        return optional.orElse(null);
+    private ItemInFridge isItemInFridge(Item item) {
+        return itemInFridgeRepository.isItemInFridge(item).orElseThrow(
+                () -> new ResourceNotFoundException("Item in fridge", "name", item.getName())
+        );
     }
 
-    private ItemInFridgeDto convertToItemInFridgeDto(ItemInFridge itemInFridge){
+    private ItemInFridgeDto convertToItemInFridgeDto(ItemInFridge itemInFridge) {
         return modelMapper.map(itemInFridge, ItemInFridgeDto.class);
     }
 
-    private ItemInFridge convertToItemInFridge(AddItemInFridgeDto itemInFridgeDto){
+    private ItemInFridge convertToItemInFridge(AddItemInFridgeDto itemInFridgeDto) {
         return modelMapper.map(itemInFridgeDto, ItemInFridge.class);
     }
 
-    private ItemInFridge checkIfExists(int id){
+    private ItemInFridge checkIfExists(int id) {
         return itemInFridgeRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Item in fridge", "id", Integer.toString(id))
         );

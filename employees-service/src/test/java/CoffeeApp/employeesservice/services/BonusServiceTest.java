@@ -34,15 +34,15 @@ class BonusServiceTest {
     private BonusService bonusService;
 
     @Test
-    void shouldReturnBonusDtoById(){
+    void shouldReturnBonusDtoById() {
         // given
         int bonusId = 1;
-        Bonus bonus = new Bonus(1000,500);
+        Bonus bonus = new Bonus(1000, 500);
         bonus.setId(bonusId);
 
-        BonusDto bonusDto = new BonusDto(1000,500);
+        BonusDto bonusDto = new BonusDto(1000, 500);
         when(bonusRepository.findById(bonusId)).thenReturn(Optional.of(bonus));
-        when(modelMapper.map(bonus,BonusDto.class)).thenReturn(bonusDto);
+        when(modelMapper.map(bonus, BonusDto.class)).thenReturn(bonusDto);
         // when
         BonusDto result = bonusService.findById(bonusId);
         // then
@@ -52,7 +52,7 @@ class BonusServiceTest {
     }
 
     @Test
-    void shouldNotReturnBonusDtoByIdAndThrowException(){
+    void shouldNotReturnBonusDtoById() {
         // given
         int bonusId = 1;
         when(bonusRepository.findById(bonusId)).thenReturn(Optional.empty());
@@ -64,13 +64,13 @@ class BonusServiceTest {
     }
 
     @Test
-    void shouldReturnBonusDtoByEdge(){
+    void shouldReturnBonusDtoByEdge() {
         // given
         int edge = 1000;
-        Bonus bonus = new Bonus(edge,500);
-        BonusDto bonusDto = new BonusDto(edge,500);
+        Bonus bonus = new Bonus(edge, 500);
+        BonusDto bonusDto = new BonusDto(edge, 500);
         when(bonusRepository.findByEdge(edge)).thenReturn(Optional.of(bonus));
-        when(modelMapper.map(bonus,BonusDto.class)).thenReturn(bonusDto);
+        when(modelMapper.map(bonus, BonusDto.class)).thenReturn(bonusDto);
         // when
         BonusDto result = bonusService.findByEdge(edge);
         // then
@@ -80,7 +80,7 @@ class BonusServiceTest {
     }
 
     @Test
-    void shouldNotReturnBonusDtoByEdgeAndThrowException(){
+    void shouldNotReturnBonusDtoByEdgeAndThrowException() {
         // given
         int edge = 1000;
         when(bonusRepository.findByEdge(edge)).thenReturn(Optional.empty());
@@ -92,26 +92,26 @@ class BonusServiceTest {
     }
 
     @Test
-    void shouldReturnAllBonuses(){
+    void shouldReturnAllBonuses() {
         // given
-        Bonus bonus1 = new Bonus(1000,500);
-        Bonus bonus2 = new Bonus(2000,1000);
-        List<Bonus> bonuses = Arrays.asList(bonus1,bonus2);
+        Bonus bonus1 = new Bonus(1000, 500);
+        Bonus bonus2 = new Bonus(2000, 1000);
+        List<Bonus> bonuses = Arrays.asList(bonus1, bonus2);
 
-        BonusDto bonusDto1 = new BonusDto(1000,500);
-        BonusDto bonusDto2 = new BonusDto(2000,1000);
+        BonusDto bonusDto1 = new BonusDto(1000, 500);
+        BonusDto bonusDto2 = new BonusDto(2000, 1000);
         when(bonusRepository.findAll()).thenReturn(bonuses);
-        when(modelMapper.map(bonus1,BonusDto.class)).thenReturn(bonusDto1);
-        when(modelMapper.map(bonus2,BonusDto.class)).thenReturn(bonusDto2);
+        when(modelMapper.map(bonus1, BonusDto.class)).thenReturn(bonusDto1);
+        when(modelMapper.map(bonus2, BonusDto.class)).thenReturn(bonusDto2);
         // when
         BonusResponse response = bonusService.findAll();
         // then
-        assertThat(response.getBonuses()).containsExactly(bonusDto1,bonusDto2);
+        assertThat(response.getBonuses()).containsExactly(bonusDto1, bonusDto2);
         verify(bonusRepository).findAll();
     }
 
     @Test
-    void shouldNotReturnAllBonuses(){
+    void shouldNotReturnAllBonuses() {
         // given
         when(bonusRepository.findAll()).thenReturn(Collections.emptyList());
         // when
@@ -122,9 +122,9 @@ class BonusServiceTest {
     }
 
     @Test
-    void shouldAddBonus(){
+    void shouldAddBonus() {
         // given
-        BonusDto bonusDto = new BonusDto(1000,500);
+        BonusDto bonusDto = new BonusDto(1000, 500);
         when(bonusRepository.findByEdge(bonusDto.getEdge())).thenReturn(Optional.empty());
         setModelMapper(bonusDto);
         // when
@@ -138,21 +138,21 @@ class BonusServiceTest {
     }
 
     @Test
-    void shouldNotAddBonus(){
+    void shouldNotAddBonus() {
         // given
-        BonusDto bonusDto = new BonusDto(1000,500);
+        BonusDto bonusDto = new BonusDto(1000, 500);
         Bonus existingBonus = new Bonus();
         existingBonus.setEdge(bonusDto.getEdge());
         when(bonusRepository.findByEdge(bonusDto.getEdge())).thenReturn(Optional.of(existingBonus));
         setModelMapper(bonusDto);
-        // when
+        // when & then
         assertThatThrownBy(() -> bonusService.addBonus(bonusDto))
                 .isInstanceOf(BonusAlreadyExistsException.class)
                 .hasMessageContaining("Bonus has already been added with this edge");
     }
 
     @Test
-    void shouldDeleteBonusById(){
+    void shouldDeleteBonusById() {
         // given
         int bonusId = 1;
         Bonus bonus = new Bonus();
@@ -161,30 +161,27 @@ class BonusServiceTest {
         when(bonusRepository.findById(bonusId)).thenReturn(Optional.of(bonus));
         doNothing().when(bonusRepository).deleteById(bonusId);
         // when
-        boolean result = bonusService.deleteBonus(bonusId);
+        bonusService.deleteBonus(bonusId);
         // then
-        assertThat(result).isTrue();
-        verify(bonusRepository).findById(bonusId);
-
         ArgumentCaptor<Integer> idCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(bonusRepository).deleteById(idCaptor.capture());
         assertThat(idCaptor.getValue()).isEqualTo(bonusId);
+        verify(bonusRepository).findById(bonusId);
     }
 
     @Test
-    void shouldUpdateBonusById(){
+    void shouldUpdateBonusById() {
         // given
         int bonusId = 1;
         BonusDto bonusDto = new BonusDto(1000, 500);
-        Bonus existingBonus = new Bonus(1500,750);
+        Bonus existingBonus = new Bonus(1500, 750);
         existingBonus.setId(bonusId);
 
         when(bonusRepository.findById(bonusId)).thenReturn(Optional.of(existingBonus));
         setModelMapper(bonusDto);
         // when
-        boolean isUpdated = bonusService.updateBonus(bonusId,bonusDto);
+        bonusService.updateBonus(bonusId, bonusDto);
         // then
-        assertThat(isUpdated).isTrue();
         ArgumentCaptor<Bonus> bonusCaptor = ArgumentCaptor.forClass(Bonus.class);
         verify(bonusRepository).save(bonusCaptor.capture());
         Bonus updatedBonus = bonusCaptor.getValue();
@@ -195,5 +192,5 @@ class BonusServiceTest {
     private void setModelMapper(BonusDto bonusDto) {
         when(modelMapper.map(bonusDto, Bonus.class)).thenReturn(new Bonus(bonusDto.getEdge(), bonusDto.getValue()));
     }
-  
+
 }

@@ -53,7 +53,7 @@ public class EmployeeController {
     }
     )
     @GetMapping
-    public EmployeeResponse findAll(){
+    public EmployeeResponse findAll() {
         return employeeService.findAll();
     }
 
@@ -77,9 +77,9 @@ public class EmployeeController {
     }
     )
     @GetMapping("/get/{name}")
-    public ResponseEntity<ResponseDto> findByNameStartingWith(@PathVariable("name") String name){
-        employeeService.findByName(name);
-        return responseStatusOk();
+    public ResponseEntity<EmployeeDto> findByName(@PathVariable("name") String name) {
+        EmployeeDto employeeDto = convertToEmployeeDto(employeeService.findByName(name));
+        return ResponseEntity.status(HttpStatus.OK).body(employeeDto);
     }
 
     @Operation(
@@ -92,10 +92,6 @@ public class EmployeeController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -105,15 +101,9 @@ public class EmployeeController {
     }
     )
     @DeleteMapping("/delete/{name}")
-    public ResponseEntity<ResponseDto> deleteEmployee(@PathVariable("name") String name){
-        boolean isDeleted = employeeService.deleteEmployee(name);
-        if (isDeleted){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(EmployeeConstants.STATUS_417, EmployeeConstants.MESSAGE_417_DELETE));
-        }
+    public ResponseEntity<ResponseDto> deleteEmployee(@PathVariable("name") String name) {
+        employeeService.deleteEmployee(name);
+        return responseStatusOk();
     }
 
     @Operation(
@@ -126,10 +116,6 @@ public class EmployeeController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -140,23 +126,19 @@ public class EmployeeController {
     )
     @PatchMapping("/assignPosition/{name}/{positionId}")
     public ResponseEntity<ResponseDto> assignRole(@PathVariable("name") String name,
-                                                  @PathVariable("positionId") Integer positionId){
-        boolean isAssigned = employeeService.assignPosition(name, positionId);
-        if (isAssigned){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(EmployeeConstants.STATUS_417, EmployeeConstants.MESSAGE_417_UPDATE));
-        }
+                                                  @PathVariable("positionId") Integer positionId) {
+        employeeService.assignPosition(name, positionId);
+        return responseStatusOk();
     }
 
-
-
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(EmployeeConstants.STATUS_200, EmployeeConstants.MESSAGE_200));
+    }
+
+    private EmployeeDto convertToEmployeeDto(Employee employee) {
+        return modelMapper.map(employee, EmployeeDto.class);
     }
 
 }

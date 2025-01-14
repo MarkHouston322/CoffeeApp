@@ -64,4 +64,10 @@ public class Drink {
         this.writeOffQuantity = writeOffQuantity;
         this.surchargeRatio = surchargeRatio;
     }
+
+    public Drink(String name, Category category, Float surchargeRatio) {
+        this.name = name;
+        this.category = category;
+        this.surchargeRatio = surchargeRatio;
+    }
 }

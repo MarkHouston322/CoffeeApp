@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "drinks_in_order")
+@Table(name = "goods_in_order")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
@@ -20,7 +20,7 @@ public class GoodInOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "drinks_in_order_id")
+    @Column(name = "goods_in_order_id")
     private Integer id;
 
     @ManyToOne
@@ -30,10 +30,10 @@ public class GoodInOrder {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @Column(name = "drink_name")
+    @Column(name = "good_name")
     private String goodName;
 
-    @Column(name = "drink_price")
+    @Column(name = "good_price")
     private Integer goodPrice;
 
     @Column(name = "sold_confirmation")

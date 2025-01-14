@@ -47,13 +47,13 @@ class BonusRepositoryTest {
     }
 
     @Test
-    void shouldFindByEdge() {
+    void shouldFindBonusByEdge() {
         Optional<Bonus> optionalBonus = bonusRepository.findByEdge(1000);
         assertThat(optionalBonus).isPresent();
     }
 
     @Test
-    void shouldNotFindByEdge() {
+    void shouldNotFindBonusByEdge() {
         Optional<Bonus> optionalBonus = bonusRepository.findByEdge(1500);
         assertThat(optionalBonus).isEmpty();
     }

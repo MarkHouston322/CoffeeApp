@@ -2,9 +2,13 @@ package CoffeeApp.storageservice.dto.drinkDto;
 
 import CoffeeApp.storageservice.models.Category;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddDrinkDto {
 
     @NotEmpty(message = "Drink name should not be empty") //, groups = FirstValidation.class

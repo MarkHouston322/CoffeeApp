@@ -4,6 +4,7 @@ import CoffeeApp.employeesservice.models.Employee;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
         description = "Schema to fetch salary session"
 )
 @Data
+@AllArgsConstructor
 public class SalaryDto {
 
     @Schema(

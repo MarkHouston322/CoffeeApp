@@ -1,10 +1,7 @@
 package CoffeeApp.customerservice.repositories;
 
 import CoffeeApp.customerservice.models.Customer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -30,9 +27,8 @@ class CustomerRepositoryTest {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Test
-    void shouldFindCustomerBySecondNameStartingWith() {
-        // give
+    @BeforeEach
+    void setUp() {
         Customer customer = new Customer(
                 "Name",
                 "SecondName",
@@ -40,91 +36,46 @@ class CustomerRepositoryTest {
                 "test111@gmail.com"
         );
         customerRepository.save(customer);
-        // when
+    }
+
+    @AfterEach
+    void clearUp(){
+        customerRepository.deleteAll();
+    }
+
+    @Test
+    void shouldFindCustomerBySecondNameStartingWith() {
         List<Customer> customerList = customerRepository.findBySecondNameStartingWith("Secon");
-        // then
         assertThat(customerList).doesNotContainNull();
     }
 
     @Test
     void shouldNotFindCustomerBySecondNameStartingWith() {
-        // give
-        Customer customer = new Customer(
-                "Name",
-                "SecondName",
-                "8888117351",
-                "test222@gmail.com"
-        );
-        customerRepository.save(customer);
-        // when
         List<Customer> customerList = customerRepository.findBySecondNameStartingWith("ytyt");
-        // then
         assertThat(customerList).isEmpty();
     }
 
     @Test
     void shouldFindCustomerByMobileNUmberEndingWith() {
-        // give
-        Customer customer = new Customer(
-                "Name",
-                "SecondName",
-                "7778117351",
-                "test333@gmail.com"
-        );
-        customerRepository.save(customer);
-        // when
         List<Customer> customerList = customerRepository.findBySecondNameStartingWith("7351");
-        // then
         assertThat(customerList).doesNotContainNull();
     }
 
     @Test
     void shouldNotFindCustomerByMobileNUmberEndingWith() {
-        // give
-        Customer customer = new Customer(
-                "Name",
-                "SecondName",
-                "6668117351",
-                "test444@gmail.com"
-        );
-        customerRepository.save(customer);
-        // when
         List<Customer> customerList = customerRepository.findBySecondNameStartingWith("5555");
-        // then
         assertThat(customerList).isEmpty();
     }
 
     @Test
     void shouldFindCustomerByMobileNumber(){
-        // give
-        Customer customer = new Customer(
-                "Name",
-                "SecondName",
-                "5558117351",
-                "test555@gmail.com"
-        );
-        customerRepository.save(customer);
-        // when
-        Optional<Customer> optionalCustomer = customerRepository.findByMobileNumber("5558117351");
-        // then
+        Optional<Customer> optionalCustomer = customerRepository.findByMobileNumber("9998117351");
         assertThat(optionalCustomer).isNotEmpty();
     }
 
     @Test
     void shouldNotFindCustomerByMobileNumber(){
-        // give
-        Customer customer = new Customer(
-                "Name",
-                "SecondName",
-                "444117351",
-                "test666@gmail.com"
-        );
-        customerRepository.save(customer);
-        // when
         Optional<Customer> optionalCustomer = customerRepository.findByMobileNumber("9988117351");
-        // then
         assertThat(optionalCustomer).isEmpty();
     }
-
-
 }

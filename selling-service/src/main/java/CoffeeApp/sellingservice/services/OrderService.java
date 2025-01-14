@@ -59,15 +59,11 @@ public class OrderService {
     }
 
     public List<GoodInOrderDto> getGoodsInOrder(Integer orderId) {
+        checkIfExists(orderId);
         List<GoodProjection> projections = orderRepository.findGoodsByOrderId(orderId);
-
         return projections.stream()
                 .map(projection -> new GoodInOrderDto(projection.goodName(), projection.goodQuantity()))
                 .collect(Collectors.toList());
-    }
-
-    public String getDrink(String drinkName) {
-        return redisTemplate.opsForValue().get(drinkName);
     }
 
     @Transactional

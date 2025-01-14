@@ -20,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
-
 @RestController
 @RequestMapping("/loyalty")
 @AllArgsConstructor
@@ -48,7 +47,7 @@ public class LoyaltyLevelController {
     }
     )
     @GetMapping
-    public LoyaltyLevelResponse findAll(){
+    public LoyaltyLevelResponse findAll() {
         return loyaltyLevelService.findAll();
     }
 
@@ -71,7 +70,7 @@ public class LoyaltyLevelController {
     }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<LoyaltyLevelDto> getLoyaltyLevel(@PathVariable("id") Integer id){
+    public ResponseEntity<LoyaltyLevelDto> getLoyaltyLevel(@PathVariable("id") Integer id) {
         LoyaltyLevelDto loyaltyLevelDto = loyaltyLevelService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(loyaltyLevelDto);
     }
@@ -95,7 +94,7 @@ public class LoyaltyLevelController {
     }
     )
     @GetMapping("/get/{name}")
-    public LoyaltyLevelResponse getLoyaltyLevelsByName(@PathVariable("name") String name){
+    public LoyaltyLevelResponse getLoyaltyLevelsByName(@PathVariable("name") String name) {
         return loyaltyLevelService.findByName(name);
     }
 
@@ -118,7 +117,7 @@ public class LoyaltyLevelController {
     }
     )
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addLoyaltyLevel(@Valid @RequestBody LoyaltyLevelDto loyaltyLevelDto){
+    public ResponseEntity<ResponseDto> addLoyaltyLevel(@Valid @RequestBody LoyaltyLevelDto loyaltyLevelDto) {
         loyaltyLevelService.addLoyaltyLevel(loyaltyLevelDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -135,10 +134,6 @@ public class LoyaltyLevelController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -149,15 +144,9 @@ public class LoyaltyLevelController {
     )
     @PatchMapping("/{id}/update")
     public ResponseEntity<ResponseDto> updateLoyaltyLevel(@PathVariable("id") Integer id,
-                                                          @Valid @RequestBody LoyaltyLevelDto loyaltyLevelDto){
-        boolean isUpdated = loyaltyLevelService.updateLoyaltyService(id, loyaltyLevelDto);
-        if (isUpdated){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(LoyaltyLevelConstants.STATUS_417, LoyaltyLevelConstants.MESSAGE_417_UPDATE));
-        }
+                                                          @Valid @RequestBody LoyaltyLevelDto loyaltyLevelDto) {
+        loyaltyLevelService.updateLoyaltyService(id, loyaltyLevelDto);
+        return responseStatusOk();
     }
 
     @Operation(
@@ -170,10 +159,6 @@ public class LoyaltyLevelController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -183,18 +168,12 @@ public class LoyaltyLevelController {
     }
     )
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<ResponseDto> deleteLoyaltyLevel(@PathVariable("id") Integer id){
-        boolean isDeleted = loyaltyLevelService.deleteLoyaltyLevel(id);
-        if (isDeleted){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(LoyaltyLevelConstants.STATUS_417, LoyaltyLevelConstants.MESSAGE_417_DELETE));
-        }
+    public ResponseEntity<ResponseDto> deleteLoyaltyLevel(@PathVariable("id") Integer id) {
+        loyaltyLevelService.deleteLoyaltyLevel(id);
+        return responseStatusOk();
     }
 
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(LoyaltyLevelConstants.STATUS_200, LoyaltyLevelConstants.MESSAGE_200));

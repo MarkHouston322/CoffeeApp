@@ -2,9 +2,12 @@ package CoffeeApp.financialservice.in.Coffee.application.dto.transactionDto;
 
 import CoffeeApp.financialservice.in.Coffee.application.models.Session;
 import CoffeeApp.financialservice.in.Coffee.application.models.TransactionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +16,8 @@ import java.time.LocalDateTime;
         name = "Fetch transaction",
         description = "Schema to fetch transaction"
 )
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransactionDto {
 
     @Schema(
@@ -31,5 +36,6 @@ public class TransactionDto {
     )
     private Integer sum;
 
+    @JsonIgnore
     private Session session;
 }

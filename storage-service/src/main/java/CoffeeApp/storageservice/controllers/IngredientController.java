@@ -27,7 +27,6 @@ public class IngredientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<IngredientDto> getIngredient(@PathVariable("id") Integer id) {
-
         IngredientDto ingredientDto = ingredientService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(ingredientDto);
     }
@@ -45,31 +44,19 @@ public class IngredientController {
                 .body(new ResponseDto(IngredientConstants.STATUS_201, IngredientConstants.MESSAGE_201));
     }
 
-    @PatchMapping ("/{id}/update")
+    @PatchMapping("/{id}/update")
     public ResponseEntity<ResponseDto> updateIngredient(@PathVariable("id") Integer id, @Valid @RequestBody IngredientDto ingredientDto) {
-        boolean isUpdated = ingredientService.updateIngredient(id, ingredientDto);
-        if (isUpdated) {
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(IngredientConstants.STATUS_417, IngredientConstants.MESSAGE_417_UPDATE));
-        }
+        ingredientService.updateIngredient(id, ingredientDto);
+        return responseStatusOk();
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<ResponseDto> deleteIngredient(@PathVariable("id") Integer id){
-        boolean isDeleted = ingredientService.deleteIngredient(id);
-        if (isDeleted){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(IngredientConstants.STATUS_417, IngredientConstants.MESSAGE_417_DELETE));
-        }
+    public ResponseEntity<ResponseDto> deleteIngredient(@PathVariable("id") Integer id) {
+        ingredientService.deleteIngredient(id);
+        return responseStatusOk();
     }
 
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(IngredientConstants.STATUS_200, IngredientConstants.MESSAGE_200));

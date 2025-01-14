@@ -27,12 +27,12 @@ public class DrinkController {
     private final DrinkService drinkService;
 
     @GetMapping
-    public DrinkResponse getDrinks(){
+    public DrinkResponse getDrinks() {
         return drinkService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShowDrinkDto> getDrink(@PathVariable("id") Integer id){
+    public ResponseEntity<ShowDrinkDto> getDrink(@PathVariable("id") Integer id) {
         ShowDrinkDto showDrinkDto = drinkService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(showDrinkDto);
     }
@@ -44,7 +44,7 @@ public class DrinkController {
     }
 
     @GetMapping("/get/{name}")
-    public DrinkResponse getDrinksByName(@PathVariable("name") String name){
+    public DrinkResponse getDrinksByName(@PathVariable("name") String name) {
         return drinkService.findDrinksByName(name);
     }
 
@@ -60,9 +60,9 @@ public class DrinkController {
     @PatchMapping("/{id}/update")
     public ResponseEntity<ResponseDto> updateDrink(@PathVariable("id") Integer id,
                                                    @Valid @RequestBody AddDrinkDto addDrinkDto,
-                                                   @RequestParam Map<String, String> ingredients){
-        boolean isUpdated = drinkService.updateDrink(id,addDrinkDto,ingredients);
-        if (isUpdated){
+                                                   @RequestParam Map<String, String> ingredients) {
+        boolean isUpdated = drinkService.updateDrink(id, addDrinkDto, ingredients);
+        if (isUpdated) {
             return responseStatusOk();
         } else {
             return ResponseEntity
@@ -72,18 +72,12 @@ public class DrinkController {
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<ResponseDto> deleteDrink(@PathVariable("id") Integer id){
-        boolean isDeleted = drinkService.deleteDrinkById(id);
-        if (isDeleted){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(DrinkConstants.STATUS_417, DrinkConstants.MESSAGE_417_DELETE));
-        }
+    public ResponseEntity<ResponseDto> deleteDrink(@PathVariable("id") Integer id) {
+        drinkService.deleteDrinkById(id);
+        return responseStatusOk();
     }
 
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(DrinkConstants.STATUS_200, DrinkConstants.MESSAGE_200));

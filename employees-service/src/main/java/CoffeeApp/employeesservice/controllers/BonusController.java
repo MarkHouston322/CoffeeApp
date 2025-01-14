@@ -51,7 +51,7 @@ public class BonusController {
     }
     )
     @GetMapping
-    public BonusResponse findAll(){
+    public BonusResponse findAll() {
         return bonusService.findAll();
     }
 
@@ -74,7 +74,7 @@ public class BonusController {
     }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<BonusDto> findById(@PathVariable("id") Integer id){
+    public ResponseEntity<BonusDto> findById(@PathVariable("id") Integer id) {
         BonusDto bonusDto = bonusService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(bonusDto);
     }
@@ -98,7 +98,7 @@ public class BonusController {
     }
     )
     @GetMapping("/get/{edge}")
-    public ResponseEntity<BonusDto> findByEdge(@PathVariable("edge") Integer edge){
+    public ResponseEntity<BonusDto> findByEdge(@PathVariable("edge") Integer edge) {
         BonusDto bonusDto = bonusService.findByEdge(edge);
         return ResponseEntity.status(HttpStatus.OK).body(bonusDto);
     }
@@ -122,7 +122,7 @@ public class BonusController {
     }
     )
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addBonus(@Valid @RequestBody BonusDto bonusDto){
+    public ResponseEntity<ResponseDto> addBonus(@Valid @RequestBody BonusDto bonusDto) {
         bonusService.addBonus(bonusDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -139,10 +139,6 @@ public class BonusController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -153,15 +149,9 @@ public class BonusController {
     )
     @PatchMapping("/{id}/update")
     public ResponseEntity<ResponseDto> updateBonus(@PathVariable("id") Integer id,
-                                                   @Valid @RequestBody BonusDto bonusDto){
-        boolean isUpdated = bonusService.updateBonus(id,bonusDto);
-        if (isUpdated){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(BonusConstants.STATUS_417, BonusConstants.MESSAGE_417_UPDATE));
-        }
+                                                   @Valid @RequestBody BonusDto bonusDto) {
+        bonusService.updateBonus(id, bonusDto);
+        return responseStatusOk();
     }
 
     @Operation(
@@ -174,10 +164,6 @@ public class BonusController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -187,20 +173,13 @@ public class BonusController {
     }
     )
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<ResponseDto> deleteBonus(@PathVariable("id") Integer id){
-        boolean isDeleted = bonusService.deleteBonus(id);
-        if (isDeleted){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(BonusConstants.STATUS_417, BonusConstants.MESSAGE_417_DELETE));
-        }
-
+    public ResponseEntity<ResponseDto> deleteBonus(@PathVariable("id") Integer id) {
+        bonusService.deleteBonus(id);
+        return responseStatusOk();
     }
 
 
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(BonusConstants.STATUS_200, BonusConstants.MESSAGE_200));

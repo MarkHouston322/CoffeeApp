@@ -63,26 +63,21 @@ public class CustomerService {
     }
 
     @Transactional
-    public boolean deleteCustomer(Integer id) {
+    public void deleteCustomer(Integer id) {
         checkIfExists(id);
         customerRepository.deleteById(id);
-        return true;
     }
 
     @Transactional
-    public boolean updateCustomer(Integer id, AddCustomerDto addCustomerDto) {
-        boolean isUpdated = false;
-        if (addCustomerDto != null) {
-            Customer customerToBeUpdated = checkIfExists(id);
-            Customer updatedCustomer = convertToCustomer(addCustomerDto);
-            updatedCustomer.setId(customerToBeUpdated.getId());
-            updatedCustomer.setEmail(customerToBeUpdated.getEmail());
-            updatedCustomer.setLoyaltyLevel(customerToBeUpdated.getLoyaltyLevel());
-            updatedCustomer.setTotalPurchases(customerToBeUpdated.getTotalPurchases());
-            customerRepository.save(updatedCustomer);
-            isUpdated = true;
-        }
-        return isUpdated;
+    public void updateCustomer(Integer id, AddCustomerDto addCustomerDto) {
+        Customer customerToBeUpdated = checkIfExists(id);
+        Customer updatedCustomer = convertToCustomer(addCustomerDto);
+        updatedCustomer.setId(customerToBeUpdated.getId());
+        updatedCustomer.setEmail(customerToBeUpdated.getEmail());
+        updatedCustomer.setLoyaltyLevel(customerToBeUpdated.getLoyaltyLevel());
+        updatedCustomer.setTotalPurchases(customerToBeUpdated.getTotalPurchases());
+        customerRepository.save(updatedCustomer);
+
     }
 
     @Transactional
@@ -93,7 +88,7 @@ public class CustomerService {
         LoyaltyLevel loyaltyLevel = loyaltyLevelService.findByEdge(userPurchases);
         if (!Objects.equals(customer.getLoyaltyLevel().getId(), loyaltyLevel.getId())) {
             customer.setLoyaltyLevel(loyaltyLevel);
-            sendCustomer(customer,loyaltyLevel);
+            sendCustomer(customer, loyaltyLevel);
         }
     }
 
@@ -103,9 +98,9 @@ public class CustomerService {
         );
     }
 
-    private void sendCustomer(Customer customer, LoyaltyLevel loyaltyLevel){
+    private void sendCustomer(Customer customer, LoyaltyLevel loyaltyLevel) {
         CustomerInOrderDto customerInOrderDto = new CustomerInOrderDto(customer.getId(), loyaltyLevel.getDiscountPercentage());
-        streamBridge.send("sendCustomer-out-0",customerInOrderDto);
+        streamBridge.send("sendCustomer-out-0", customerInOrderDto);
     }
 
     private CustomerDto convertToCustomerDto(Customer customer) {

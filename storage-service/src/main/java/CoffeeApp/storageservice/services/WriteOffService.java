@@ -124,7 +124,7 @@ public class WriteOffService implements ContainIngredients {
 
     private WriteOff checkIfExists(int id) {
         return writeOffRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Order", "id", Integer.toString(id))
+                () -> new ResourceNotFoundException("Write-off", "id", Integer.toString(id))
         );
     }
 

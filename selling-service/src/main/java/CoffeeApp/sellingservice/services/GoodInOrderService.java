@@ -18,13 +18,12 @@ public class GoodInOrderService {
 
     private final GoodInOrderRepository goodInOrderRepository;
 
-    @Transactional
-    public void addDrinkInOrder(GoodInOrder goodInOrder){
-        goodInOrderRepository.save(goodInOrder);
-    }
-
     public List<GoodInOrder> findByOrderId(Integer id){
         return goodInOrderRepository.findByOrder_Id(id);
     }
 
+    @Transactional
+    public void addDrinkInOrder(GoodInOrder goodInOrder){
+        goodInOrderRepository.save(goodInOrder);
+    }
 }

@@ -4,9 +4,13 @@ import CoffeeApp.storageservice.models.Category;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddItemDto {
 
     @NotEmpty(message = "Item name should not be empty")
@@ -24,6 +28,5 @@ public class AddItemDto {
     @Positive(message = "Cost price  should not be negative")
     private Float costPrice;
 
-    
     private Category category;
 }

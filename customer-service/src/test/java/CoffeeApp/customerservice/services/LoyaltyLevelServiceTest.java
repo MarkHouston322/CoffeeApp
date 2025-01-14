@@ -183,9 +183,8 @@ class LoyaltyLevelServiceTest {
         when(loyaltyLevelRepository.findById(levelId)).thenReturn(Optional.of(level));
         doNothing().when(loyaltyLevelRepository).deleteById(levelId);
         // when
-        boolean result = loyaltyLevelService.deleteLoyaltyLevel(levelId);
+        loyaltyLevelService.deleteLoyaltyLevel(levelId);
         // then
-        assertThat(result).isTrue();
         verify(loyaltyLevelRepository, times(1)).findById(levelId);
 
         ArgumentCaptor<Integer> idCaptor = ArgumentCaptor.forClass(Integer.class);
@@ -204,9 +203,8 @@ class LoyaltyLevelServiceTest {
         when(loyaltyLevelRepository.findById(levelId)).thenReturn(Optional.of(existingLevel));
         setModelMapper(levelDto);
         // when
-        boolean isUpdated = loyaltyLevelService.updateLoyaltyService(levelId,levelDto);
-        // then
-        assertThat(isUpdated).isTrue();
+        loyaltyLevelService.updateLoyaltyService(levelId,levelDto);
+        // then;
         ArgumentCaptor<LoyaltyLevel> levelArgumentCaptor = ArgumentCaptor.forClass(LoyaltyLevel.class);
         verify(loyaltyLevelRepository).save(levelArgumentCaptor.capture());
 

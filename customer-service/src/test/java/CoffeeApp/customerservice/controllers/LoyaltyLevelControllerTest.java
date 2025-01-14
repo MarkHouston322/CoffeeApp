@@ -96,7 +96,7 @@ class LoyaltyLevelControllerTest {
     @Test
     void shouldUpdateLoyaltyLevelAndReturnStatus200() throws Exception {
         // given
-        when(levelService.updateLoyaltyService(Mockito.anyInt(), Mockito.<LoyaltyLevelDto>any())).thenReturn(true);
+        doNothing().when(levelService).updateLoyaltyService(Mockito.anyInt(),Mockito.any());
         MockHttpServletRequestBuilder requestBuilder = setRequestBuilderForUpdate();
         // when & then
         buildRequestBuilder(requestBuilder)
@@ -104,26 +104,12 @@ class LoyaltyLevelControllerTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .string("<ResponseDto><statusCode>200</statusCode><statusMsg>Request processed successfully</statusMsg><"
                                 + "/ResponseDto>"));
-    }
-
-    @Test
-    void shouldNotUpdateLoyaltyLevelAndReturnStatus417() throws Exception {
-        // given
-        when(levelService.updateLoyaltyService(Mockito.anyInt(), Mockito.<LoyaltyLevelDto>any())).thenReturn(false);
-        MockHttpServletRequestBuilder requestBuilder = setRequestBuilderForUpdate();
-        // when & then
-        buildRequestBuilder(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().is(417))
-                .andExpect(MockMvcResultMatchers.content()
-                        .string(
-                                "<ResponseDto><statusCode>417</statusCode><statusMsg>Update operation failed. Please try again or contact"
-                                        + " Dev team</statusMsg></ResponseDto>"));
     }
 
     @Test
     void shouldDeleteLoyaltyLevelAndReturnStatus200() throws Exception {
         // given
-        when(levelService.deleteLoyaltyLevel(Mockito.anyInt())).thenReturn(true);
+        doNothing().when(levelService).deleteLoyaltyLevel(Mockito.anyInt());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/loyalty/{id}/delete", 1);
         // when & then
         buildRequestBuilder(requestBuilder)
@@ -131,20 +117,6 @@ class LoyaltyLevelControllerTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .string("<ResponseDto><statusCode>200</statusCode><statusMsg>Request processed successfully</statusMsg><"
                                 + "/ResponseDto>"));
-    }
-
-    @Test
-    void shouldNotDeleteLoyaltyLevelAndReturnStatus417() throws Exception {
-        // given
-        when(levelService.deleteLoyaltyLevel(Mockito.anyInt())).thenReturn(false);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/loyalty/{id}/delete", 1);
-        // when & then
-        buildRequestBuilder(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().is(417))
-                .andExpect(MockMvcResultMatchers.content()
-                        .string(
-                                "<ResponseDto><statusCode>417</statusCode><statusMsg>Delete operation failed. Please try again or contact"
-                                        + " Dev team</statusMsg></ResponseDto>"));
     }
 
     private MockHttpServletRequestBuilder setRequestBuilderForUpdate() throws JsonProcessingException {

@@ -28,70 +28,69 @@ public class ItemService {
     private final StreamBridge streamBridge;
     private final IngredientService ingredientService;
 
-    public ItemDto findById(int id){
+    public ItemDto findById(int id) {
         Item item = checkIfExists(id);
         return convertToItemDto(item);
     }
 
     @Transactional(noRollbackFor = ResourceNotFoundException.class)
-    public Item findByName(String name){
+    public Item findByName(String name) {
         return itemRepository.findByName(name).orElseThrow(
                 () -> new ResourceNotFoundException("Item", "name", name)
         );
     }
 
-    public ItemResponse findItemsByName(String name){
+    public ItemResponse findItemsByName(String name) {
         return new ItemResponse(itemRepository.findByNameStartingWith(name).stream().map(this::convertToItemDto)
                 .collect(Collectors.toList()));
     }
 
 
-    public ItemResponse findAll(){
-        return new ItemResponse(itemRepository.findAll().stream().map(this::convertToItemDto).collect(Collectors.toList()));
+    public ItemResponse findAll() {
+        return new ItemResponse(itemRepository.findAll().stream().map(this::convertToItemDto).
+                collect(Collectors.toList()));
     }
 
     @Transactional
-    public void addItem(AddItemDto addItemDto){
+    public void addItem(AddItemDto addItemDto) {
         Item itemToAdd = convertToItem(addItemDto);
         Optional<Item> optionalItem = itemRepository.findByName(itemToAdd.getName());
-        if (optionalItem.isPresent()){
+        if (optionalItem.isPresent()) {
             throw new ItemAlreadyExistsException("Item has already been added with this name: " + itemToAdd.getName());
         }
         itemToAdd.setPrice((int) Math.ceil((itemToAdd.getCostPrice() * itemToAdd.getSurchargeRatio()) / 10) * 10);
-        itemToAdd.setQuantityInStock(itemToAdd.getQuantityInStock());
+        //   itemToAdd.setQuantityInStock(itemToAdd.getQuantityInStock());
         itemRepository.save(itemToAdd);
         sendItem(itemToAdd);
     }
 
     @Transactional
-    public boolean deleteItem(int id){
+    public void deleteItem(int id) {
         checkIfExists(id);
         itemRepository.deleteById(id);
-        return true;
     }
 
     @Transactional
-    public boolean updateItem(int id, AddItemDto addItemDto){
-        boolean isUpdated = false;
-        if (addItemDto != null){
-            Item updatedItem = convertToItem(addItemDto);
-            updatedItem.setId(id);
-            itemRepository.save(updatedItem);
-            sendItem(updatedItem);
-            isUpdated = true;
-        }
-        return isUpdated;
+    public void updateItem(int id, AddItemDto addItemDto) {
+        Item itemToBeUpdated = checkIfExists(id);
+        Item updatedItem = convertToItem(addItemDto);
+        updatedItem.setId(itemToBeUpdated.getId());
+        updatedItem.setAcceptances(itemToBeUpdated.getAcceptances());
+        updatedItem.setWriteOffs(itemToBeUpdated.getWriteOffs());
+        updatedItem.setUnitsInFridge(itemToBeUpdated.getUnitsInFridge());
+        itemRepository.save(updatedItem);
+        sendItem(updatedItem);
     }
 
     @Transactional
-    public void increaseItem(String name, Float increaseQuantity){
+    public void increaseItem(String name, Float increaseQuantity) {
         itemRepository.findByName(name).ifPresent(
                 item -> item.setQuantityInStock(item.getQuantityInStock() + increaseQuantity)
         );
     }
 
     @Transactional
-    public void decreaseItem(String name, Float decreaseQuantity){
+    public void decreaseItem(String name, Float decreaseQuantity) {
         itemRepository.findByName(name).ifPresent(
                 item -> item.setQuantityInStock(item.getQuantityInStock() - decreaseQuantity)
         );
@@ -118,18 +117,18 @@ public class ItemService {
         return total;
     }
 
-    public float calculateCostFromFile(List<AddItemDto> items){
+    public float calculateCostFromFile(List<AddItemDto> items) {
         float total = 0;
-        for (AddItemDto addItemDto : items){
+        for (AddItemDto addItemDto : items) {
             float itemCost = addItemDto.getCostPrice() * addItemDto.getQuantityInStock();
             total += itemCost;
         }
         return total;
     }
 
-    private void sendItem(Item item){
-        GoodMessage itemMessage = new GoodMessage(item.getName(),item.getPrice(), "item");
-        streamBridge.send("sendGood-out-0",itemMessage);
+    private void sendItem(Item item) {
+        GoodMessage itemMessage = new GoodMessage(item.getName(), item.getPrice(), "item");
+        streamBridge.send("sendGood-out-0", itemMessage);
     }
 
     private ItemDto convertToItemDto(Item item) {
@@ -139,9 +138,4 @@ public class ItemService {
     private Item convertToItem(AddItemDto addItemDto) {
         return modelMapper.map(addItemDto, Item.class);
     }
-
-    private GoodMessage convertToGoodMessage(Item item){
-        return modelMapper.map(item, GoodMessage.class);
-    }
-
 }

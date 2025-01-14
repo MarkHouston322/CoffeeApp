@@ -53,7 +53,7 @@ public class PositionController {
     }
     )
     @GetMapping
-    public PositionResponse findAll(){
+    public PositionResponse findAll() {
         return positionService.findAll();
     }
 
@@ -76,7 +76,7 @@ public class PositionController {
     }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<PositionDto> getPosition(@PathVariable("id") Integer id){
+    public ResponseEntity<PositionDto> getPosition(@PathVariable("id") Integer id) {
         PositionDto positionDto = convertToPositionDto(positionService.findById(id));
         return ResponseEntity.status(HttpStatus.OK).body(positionDto);
     }
@@ -100,7 +100,7 @@ public class PositionController {
     }
     )
     @GetMapping("/get/{name}")
-    public PositionResponse findPositionByName(@PathVariable("name") String name){
+    public PositionResponse findPositionByName(@PathVariable("name") String name) {
         return positionService.findByName(name);
     }
 
@@ -123,7 +123,7 @@ public class PositionController {
     }
     )
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addPosition(@Valid @RequestBody PositionDto positionDto){
+    public ResponseEntity<ResponseDto> addPosition(@Valid @RequestBody PositionDto positionDto) {
         positionService.addPosition(positionDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -140,10 +140,6 @@ public class PositionController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -154,15 +150,10 @@ public class PositionController {
     )
     @PatchMapping("/{id}/update")
     public ResponseEntity<ResponseDto> updatePosition(@PathVariable("id") Integer id,
-                                                      @Valid @RequestBody PositionDto positionDto){
-        boolean isUpdated = positionService.updatePosition(id,positionDto);
-        if (isUpdated){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(PositionConstants.STATUS_417, PositionConstants.MESSAGE_417_UPDATE));
-        }
+                                                      @Valid @RequestBody PositionDto positionDto) {
+        positionService.updatePosition(id, positionDto);
+        return responseStatusOk();
+
     }
 
     @Operation(
@@ -188,24 +179,18 @@ public class PositionController {
     }
     )
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<ResponseDto> deletePosition(@PathVariable("id") Integer id){
-        boolean isDeleted = positionService.deletePosition(id);
-        if (isDeleted){
-            return responseStatusOk();
-        } else {
-           return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(PositionConstants.STATUS_417, PositionConstants.MESSAGE_417_DELETE));
-        }
+    public ResponseEntity<ResponseDto> deletePosition(@PathVariable("id") Integer id) {
+        positionService.deletePosition(id);
+        return responseStatusOk();
     }
 
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(PositionConstants.STATUS_200, PositionConstants.MESSAGE_200));
     }
 
-    private PositionDto convertToPositionDto(Position position){
+    private PositionDto convertToPositionDto(Position position) {
         return modelMapper.map(position, PositionDto.class);
     }
 }

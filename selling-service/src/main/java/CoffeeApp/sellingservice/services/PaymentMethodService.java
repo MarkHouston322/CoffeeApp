@@ -22,54 +22,45 @@ public class PaymentMethodService {
     private final PaymentMethodRepository paymentMethodRepository;
     private final ModelMapper modelMapper;
 
-    public PaymentMethodDto findById(Integer id){
+    public PaymentMethodDto findById(Integer id) {
         PaymentMethod paymentMethod = checkIfExists(id);
         return convertToPaymentMethodDto(paymentMethod);
     }
 
-    public PaymentMethod findByIdForOrder(Integer id){
-        return checkIfExists(id);
-    }
-
-    public PaymentMethodResponse findByName(String name){
-        return new  PaymentMethodResponse(paymentMethodRepository.findByNameStartingWith(name).stream().map(this::convertToPaymentMethodDto)
+    public PaymentMethodResponse findByName(String name) {
+        return new PaymentMethodResponse(paymentMethodRepository.findByNameStartingWith(name).stream().map(this::convertToPaymentMethodDto)
                 .collect(Collectors.toList()));
     }
 
-    public PaymentMethodResponse findAll(){
+    public PaymentMethodResponse findAll() {
         return new PaymentMethodResponse(paymentMethodRepository.findAll().stream().map(this::convertToPaymentMethodDto)
                 .collect(Collectors.toList()));
     }
 
     @Transactional
-    public void addPaymentMethod(PaymentMethodDto paymentMethodDto){
+    public void addPaymentMethod(PaymentMethodDto paymentMethodDto) {
         PaymentMethod paymentMethod = convertToPaymentMethod(paymentMethodDto);
         Optional<PaymentMethod> optionalPaymentMethod = paymentMethodRepository.findByName(paymentMethod.getName());
-        if (optionalPaymentMethod.isPresent()){
+        if (optionalPaymentMethod.isPresent()) {
             throw new PaymentMethodAlreadyExistsException("Payment method has already been added with this name: " + paymentMethod.getName());
         }
         paymentMethodRepository.save(paymentMethod);
     }
 
     @Transactional
-    public boolean updatePaymentMethod(Integer id, PaymentMethodDto paymentMethodDto){
-        boolean isUpdated = false;
-        if (paymentMethodDto != null){
-            PaymentMethod paymentMethodToBeUpdated = checkIfExists(id);
-            PaymentMethod updatedPaymentMethod = convertToPaymentMethod(paymentMethodDto);
-            updatedPaymentMethod.setId(id);
-            updatedPaymentMethod.setOrders(paymentMethodToBeUpdated.getOrders());
-            paymentMethodRepository.save(updatedPaymentMethod);
-            isUpdated = true;
-        }
-        return isUpdated;
+    public void updatePaymentMethod(Integer id, PaymentMethodDto paymentMethodDto) {
+        PaymentMethod paymentMethodToBeUpdated = checkIfExists(id);
+        PaymentMethod updatedPaymentMethod = convertToPaymentMethod(paymentMethodDto);
+        updatedPaymentMethod.setId(id);
+        updatedPaymentMethod.setOrders(paymentMethodToBeUpdated.getOrders());
+        paymentMethodRepository.save(updatedPaymentMethod);
+
     }
 
     @Transactional
-    public boolean deletePaymentMethod(Integer id){
+    public void deletePaymentMethod(Integer id) {
         checkIfExists(id);
         paymentMethodRepository.deleteById(id);
-        return true;
     }
 
     private PaymentMethod checkIfExists(int id) {
@@ -78,11 +69,11 @@ public class PaymentMethodService {
         );
     }
 
-    private PaymentMethodDto convertToPaymentMethodDto(PaymentMethod paymentMethod){
+    private PaymentMethodDto convertToPaymentMethodDto(PaymentMethod paymentMethod) {
         return modelMapper.map(paymentMethod, PaymentMethodDto.class);
     }
 
-    private PaymentMethod convertToPaymentMethod(PaymentMethodDto paymentMethodDto){
+    private PaymentMethod convertToPaymentMethod(PaymentMethodDto paymentMethodDto) {
         return modelMapper.map(paymentMethodDto, PaymentMethod.class);
     }
 }

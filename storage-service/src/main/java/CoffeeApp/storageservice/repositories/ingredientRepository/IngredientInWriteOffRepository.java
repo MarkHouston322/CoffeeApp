@@ -5,7 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface IngredientInWriteOffRepository extends JpaRepository<IngredientInWriteOff, Integer> {
-
-    List<IngredientInWriteOff> findByIngredient_Id(Integer id);
-}
+public interface IngredientInWriteOffRepository extends JpaRepository<IngredientInWriteOff, Integer> {}

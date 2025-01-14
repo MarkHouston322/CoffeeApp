@@ -51,13 +51,13 @@ public class AcceptanceService implements ContainIngredients {
     private final ItemInAcceptanceService itemInAcceptanceService;
     private final ModelMapper modelMapper;
     private final WordDocumentParser wordDocumentParser;
-    private final CoffeeApp.storageservice.util.AcceptanceMapper acceptanceMapper;
+    private final AcceptanceMapper acceptanceMapper;
     private final StreamBridge streamBridge;
 
 
     public AcceptanceDto findById(Integer id){
         Acceptance acceptance = checkIfExists(id);
-        return AcceptanceMapper.matToAcceptanceDto(acceptance);
+        return AcceptanceMapper.convertToAcceptanceDto(acceptance);
     }
 
     public AcceptanceResponse findAll(){
@@ -67,7 +67,6 @@ public class AcceptanceService implements ContainIngredients {
 
     public List<IngredientInDto> getIngredientByAcceptanceId(Integer acceptanceId){
         List<IngredientProjection> projections = acceptanceRepository.findIngredientsByAcceptanceId(acceptanceId);
-
         return projections.stream()
                 .map(projection -> new IngredientInDto(projection.ingredientName(), projection.ingredientQuantity()))
                 .collect(Collectors.toList());
@@ -93,7 +92,6 @@ public class AcceptanceService implements ContainIngredients {
         saveItemInAcceptance(acceptanceToAdd,goods.itemResults());
         increaseIngredients(goods.ingredientResults());
         increaseItems(goods.itemResults());
-
     }
 
     @Transactional
@@ -177,7 +175,7 @@ public class AcceptanceService implements ContainIngredients {
 
     private void increaseIngredients(Map<String, String> ingredients){
         for (Map.Entry<String, String> entry : ingredients.entrySet()){
-            ingredientService.increaseIngredients(entry.getKey(), Float.parseFloat(entry.getValue()));
+            ingredientService.increaseIngredient(entry.getKey(), Float.parseFloat(entry.getValue()));
         }
     }
 

@@ -1,4 +1,4 @@
 package CoffeeApp.storageservice.projections;
 
-public record ItemProjectionImpl(String itemName, Float itemQuantity, Float itemCostPrice) implements ItemProjection {
+public record ItemProjectionImpl(String itemName, float itemQuantity, float itemCostPrice) implements ItemProjection {
 }

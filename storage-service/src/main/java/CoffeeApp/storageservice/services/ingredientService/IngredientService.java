@@ -57,25 +57,20 @@ public class IngredientService {
     }
 
     @Transactional
-    public boolean deleteIngredient(int id) {
+    public void deleteIngredient(int id) {
         checkIfExists(id);
         ingredientRepository.deleteById(id);
-        return true;
     }
 
     @Transactional
-    public boolean updateIngredient(int id, IngredientDto ingredientDto) {
-        boolean isUpdated = false;
-        if (ingredientDto != null) {
-            Ingredient ingredientToBeUpdated = checkIfExists(id);
-            Ingredient updatedIngredient = convertToIngredient(ingredientDto);
-            updatedIngredient.setId(id);
-            updatedIngredient.setName(ingredientToBeUpdated.getName());
-            updatedIngredient.setDrinks(ingredientToBeUpdated.getDrinks());
-            ingredientRepository.save(updatedIngredient);
-            isUpdated = true;
-        }
-        return isUpdated;
+    public void updateIngredient(int id, IngredientDto ingredientDto) {
+        Ingredient ingredientToBeUpdated = checkIfExists(id);
+        Ingredient updatedIngredient = convertToIngredient(ingredientDto);
+        updatedIngredient.setId(id);
+        updatedIngredient.setName(ingredientToBeUpdated.getName());
+        updatedIngredient.setDrinks(ingredientToBeUpdated.getDrinks());
+        ingredientRepository.save(updatedIngredient);
+
     }
 
 
@@ -95,7 +90,7 @@ public class IngredientService {
 
 
     @Transactional
-    public void increaseIngredients(String name, float increaseQuantity) {
+    public void increaseIngredient(String name, float increaseQuantity) {
         ingredientRepository.findByName(name).ifPresent(
                 ingredient -> ingredient.setQuantityInStock(ingredient.getQuantityInStock() + increaseQuantity)
         );

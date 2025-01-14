@@ -25,23 +25,23 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public CategoryResponse getCategories(){
+    public CategoryResponse getCategories() {
         return categoryService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getCategory(@PathVariable("id") Integer id){
+    public ResponseEntity<CategoryDto> getCategory(@PathVariable("id") Integer id) {
         CategoryDto categoryDto = categoryService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(categoryDto);
     }
 
     @GetMapping("/get/{name}")
-    public CategoryResponse getCategoriesByName(@PathVariable("name") String name){
+    public CategoryResponse getCategoriesByName(@PathVariable("name") String name) {
         return categoryService.findCategoriesByName(name);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addCategory(@Valid @RequestBody CategoryDto categoryDto){
+    public ResponseEntity<ResponseDto> addCategory(@Valid @RequestBody CategoryDto categoryDto) {
         categoryService.addCategory(categoryDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -49,31 +49,18 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}/update")
-    public ResponseEntity<ResponseDto> updateCategory(@PathVariable("id") Integer id,
-                                                      @Valid @RequestBody CategoryDto categoryDto){
-        boolean isUpdated = categoryService.updateCategory(id, categoryDto);
-        if (isUpdated){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(CategoryConstants.STATUS_417, CategoryConstants.MESSAGE_417_UPDATE));
-        }
+    public ResponseEntity<ResponseDto> updateCategory(@PathVariable("id") Integer id, @Valid @RequestBody CategoryDto categoryDto) {
+        categoryService.updateCategory(id, categoryDto);
+        return responseStatusOk();
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<ResponseDto> deleteCategory(@PathVariable("id") Integer id){
-        boolean isDeleted = categoryService.deleteCategory(id);
-        if (isDeleted){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(CategoryConstants.STATUS_417, CategoryConstants.MESSAGE_417_DELETE));
-        }
+    public ResponseEntity<ResponseDto> deleteCategory(@PathVariable("id") Integer id) {
+        categoryService.deleteCategory(id);
+        return responseStatusOk();
     }
 
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(CategoryConstants.STATUS_200, CategoryConstants.MESSAGE_200));

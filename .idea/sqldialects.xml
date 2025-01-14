@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/helm/postgresql/selling.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/helm/postgresql/storage.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/selling-service/src/test/resources/good_in_order.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/storage-service/src/test/resources/acceptance.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/storage-service/src/test/resources/category.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/storage-service/src/test/resources/drink.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/storage-service/src/test/resources/ingredient.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/storage-service/src/test/resources/ingredient_in_drink.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/storage-service/src/test/resources/item.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/storage-service/src/test/resources/item_in_fridge.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/storage-service/src/test/resources/writeoff.sql" dialect="PostgreSQL" />
+  </component>
+</project>

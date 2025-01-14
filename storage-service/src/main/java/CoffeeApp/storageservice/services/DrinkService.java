@@ -62,7 +62,7 @@ public class DrinkService implements ContainIngredients {
         }
         checkGoods(ingredients,ingredientService,itemService);
         drinkToAdd.setCostPrice(ingredientService.calculateCost(ingredients));
-        setPrice(drinkToAdd);
+        drinkToAdd.setPrice((int) Math.ceil((drinkToAdd.getCostPrice() * drinkToAdd.getSurchargeRatio()) / 10) * 10);
         drinkToAdd.setSoldQuantity(0);
         drinkToAdd.setWriteOffQuantity(0);
         drinkRepository.save(drinkToAdd);
@@ -72,22 +72,21 @@ public class DrinkService implements ContainIngredients {
     }
 
     @Transactional
-    public boolean deleteDrinkById(int id) {
+    public void deleteDrinkById(int id) {
         checkIfExists(id);
         drinkRepository.deleteById(id);
-        return true;
     }
 
     @Transactional
     public boolean updateDrink(int id, AddDrinkDto addDrinkDto, Map<String, String> ingredients) {
         boolean isUpdated = false;
-        if (addDrinkDto != null && !ingredients.isEmpty()) {
+        if (!ingredients.isEmpty()) {
             checkIfExists(id);
             Drink updatedDrink = convertToDrink(addDrinkDto);
             updatedDrink.setId(id);
             ingredientInDrinkService.deleteIngredientInDrink(id);
             updatedDrink.setCostPrice(ingredientService.calculateCost(ingredients));
-            setPrice(updatedDrink);
+            updatedDrink.setPrice((int) Math.ceil((updatedDrink.getCostPrice() * updatedDrink.getSurchargeRatio()) / 10) * 10);
             setQuantitiesForUpdate(updatedDrink,id);
             drinkRepository.save(updatedDrink);
             saveIngredientInDrink(updatedDrink,ingredients);
@@ -125,10 +124,6 @@ public class DrinkService implements ContainIngredients {
         ingredientsQuantity.forEach((ingredient, totalQuantity) ->
                 ingredientService.decreaseIngredient(ingredient.getId(), totalQuantity * quantity)
         );
-    }
-
-    private void setPrice(Drink drink){
-        drink.setPrice((int) Math.ceil((drink.getCostPrice() * drink.getSurchargeRatio()) / 10) * 10);
     }
 
     private void setQuantitiesForUpdate(Drink updatedDrink,Integer id){
@@ -178,7 +173,4 @@ public class DrinkService implements ContainIngredients {
         return modelMapper.map(addDrinkDto, Drink.class);
     }
 
-    private GoodMessage convertToGoodMessage(Drink drink){
-        return modelMapper.map(drink, GoodMessage.class);
-    }
 }

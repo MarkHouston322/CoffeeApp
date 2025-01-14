@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Schema(
@@ -11,6 +12,7 @@ import lombok.Data;
         description = "Schema to add and fetch position of employee"
 )
 @Data
+@AllArgsConstructor
 public class PositionDto {
 
     @Schema(

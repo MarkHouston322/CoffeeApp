@@ -49,7 +49,7 @@ public class SalaryController {
     }
     )
     @GetMapping
-    public SalaryResponse findAll(){
+    public SalaryResponse findAll() {
         return salaryService.findAll();
     }
 
@@ -72,7 +72,7 @@ public class SalaryController {
     }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<SalaryDto> findById(@PathVariable("id") Integer id){
+    public ResponseEntity<SalaryDto> findById(@PathVariable("id") Integer id) {
         SalaryDto salaryDto = salaryService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(salaryDto);
     }
@@ -96,7 +96,7 @@ public class SalaryController {
     }
     )
     @GetMapping("/employee/{name}")
-    public SalaryResponse findByEmployeeId(@PathVariable("name") String name){
+    public SalaryResponse findByEmployeeName(@PathVariable("name") String name) {
         return salaryService.findByEmployeeName(name);
     }
 
@@ -110,10 +110,6 @@ public class SalaryController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -123,18 +119,13 @@ public class SalaryController {
     }
     )
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<ResponseDto> deleteSalary(@PathVariable("id") Integer id){
-        boolean isDeleted = salaryService.deleteSalary(id);
-        if(isDeleted){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(SalaryConstants.STATUS_417, SalaryConstants.MESSAGE_417_DELETE));
-        }
+    public ResponseEntity<ResponseDto> deleteSalary(@PathVariable("id") Integer id) {
+        salaryService.deleteSalary(id);
+        return responseStatusOk();
+
     }
 
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(SalaryConstants.STATUS_200, SalaryConstants.MESSAGE_200));

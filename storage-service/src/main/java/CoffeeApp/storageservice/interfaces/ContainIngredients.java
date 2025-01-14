@@ -50,10 +50,7 @@ public interface ContainIngredients {
                     }
                 }))
                 .toArray(CompletableFuture[]::new);
-
-        // Ожидаем завершения всех асинхронных операций
         CompletableFuture.allOf(futures).join();
-
         return new GoodsWrapperForWriteOff(ingredientResults, itemResults);
     }
 }

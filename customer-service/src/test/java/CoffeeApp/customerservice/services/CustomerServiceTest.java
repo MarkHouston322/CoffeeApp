@@ -94,7 +94,7 @@ class CustomerServiceTest {
         List<Customer> customers = Arrays.asList(customer1, customer2);
         when(customerRepository.findBySecondNameStartingWith(secondName)).thenReturn(customers);
 
-        CustomerDto expectedDto1 = new CustomerDto(); // assuming this is correctly mapped
+        CustomerDto expectedDto1 = new CustomerDto();
         expectedDto1.setSecondName("Smithson");
 
         CustomerDto expectedDto2 = new CustomerDto();
@@ -228,9 +228,8 @@ class CustomerServiceTest {
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
         doNothing().when(customerRepository).deleteById(customerId);
         // when
-        boolean result = customerService.deleteCustomer(customerId);
+        customerService.deleteCustomer(customerId);
         // then
-        assertThat(result).isTrue();
         verify(customerRepository, times(1)).findById(customerId);
 
         ArgumentCaptor<Integer> idCaptor = ArgumentCaptor.forClass(Integer.class);
@@ -261,10 +260,8 @@ class CustomerServiceTest {
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
         setModelMapper(addCustomerDto);
         // when
-        boolean isUpdated = customerService.updateCustomer(customerId, addCustomerDto);
-
+        customerService.updateCustomer(customerId, addCustomerDto);
         // then
-        assertThat(isUpdated).isTrue();
         ArgumentCaptor<Customer> customerCaptor = ArgumentCaptor.forClass(Customer.class);
         verify(customerRepository).save(customerCaptor.capture());
 

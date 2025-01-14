@@ -80,9 +80,9 @@ class CustomerControllerTest {
     void shouldAddCustomerAndReturnStatus201() throws Exception {
         // given
         doNothing().when(customerService).addCustomer(Mockito.<AddCustomerDto>any());
-        AddCustomerDto customerDto = new AddCustomerDto("Name", "Surname", "9998117351", "test@gmail.com");
-        String requestBody = new ObjectMapper().writeValueAsString(customerDto);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/customers/add")
+        String requestBody = createRequestBody();
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/customers/add")
                 .content(requestBody)
                 .contentType(MediaType.APPLICATION_JSON);
         // when & then
@@ -95,52 +95,31 @@ class CustomerControllerTest {
     @Test
     void shouldUpdateCustomerAndReturnStatus200() throws Exception {
         // given
-        when(customerService.updateCustomer(Mockito.anyInt(), Mockito.<AddCustomerDto>any())).thenReturn(true);
-        MockHttpServletRequestBuilder requestBuilder = setRequestBuilderForUpdate();
+        doNothing().when(customerService).updateCustomer(Mockito.anyInt(),Mockito.any());
+        String requestBody = createRequestBody();
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .patch("/customers/{id}/update", 1)
+                .content(requestBody)
+                .contentType(MediaType.APPLICATION_JSON);
         // when & then
         buildRequestBuilder(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("<ResponseDto><statusCode>200</statusCode><statusMsg>Request processed successfully</statusMsg><"
                         + "/ResponseDto>"));
 
-    }
-
-    @Test
-    void shouldNotUpdateCustomerAndReturnStatus417() throws Exception {
-        // given
-        when(customerService.updateCustomer(Mockito.anyInt(), Mockito.<AddCustomerDto>any())).thenReturn(false);
-        MockHttpServletRequestBuilder requestBuilder = setRequestBuilderForUpdate();
-        // when & then
-        buildRequestBuilder(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().is(417))
-                .andExpect(MockMvcResultMatchers.content().string("<ResponseDto><statusCode>417</statusCode><statusMsg>Update operation failed. Please try again or contact"
-                        + " Dev team</statusMsg></ResponseDto>"));
     }
 
     @Test
     void shouldDeleteCustomerAndReturnStatus200() throws Exception {
         // given
         Integer customerId = 1;
-        when(customerService.deleteCustomer(Mockito.anyInt())).thenReturn(true);
+        doNothing().when(customerService).deleteCustomer(Mockito.anyInt());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/customers/{id}/delete", customerId);
         // when & then
         buildRequestBuilder(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("<ResponseDto><statusCode>200</statusCode><statusMsg>Request processed successfully</statusMsg><"
                         + "/ResponseDto>"));
-    }
-
-    @Test
-    void shouldNotDeleteCustomerAndReturnStatus417() throws Exception {
-        // given
-        Integer customerId = 1;
-        when(customerService.deleteCustomer(Mockito.anyInt())).thenReturn(false);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/customers/{id}/delete", customerId);
-        // when & then
-        buildRequestBuilder(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().is(417))
-                .andExpect(MockMvcResultMatchers.content().string("<ResponseDto><statusCode>417</statusCode><statusMsg>Delete operation failed. Please try again or contact"
-                        + " Dev team</statusMsg></ResponseDto>"));
     }
 
     private ResultActions buildRequestBuilder(MockHttpServletRequestBuilder requestBuilder) throws Exception {
@@ -149,13 +128,9 @@ class CustomerControllerTest {
                 .perform(requestBuilder);
     }
 
-    private MockHttpServletRequestBuilder setRequestBuilderForUpdate() throws JsonProcessingException {
+    private String createRequestBody() throws JsonProcessingException {
         AddCustomerDto customerDto = new AddCustomerDto("Name", "Surname", "9998117351", "test@gmail.com");
-        String requestBody = new ObjectMapper().writeValueAsString(customerDto);
-        return MockMvcRequestBuilders
-                .patch("/customers/{id}/update", 1)
-                .content(requestBody)
-                .contentType(MediaType.APPLICATION_JSON);
+        return new ObjectMapper().writeValueAsString(customerDto);
     }
 
 }

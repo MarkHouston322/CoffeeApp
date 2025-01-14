@@ -37,13 +37,13 @@ public class WriteOffController {
     }
 
     @GetMapping("/{id}/ingredients")
-    public ResponseEntity<List<IngredientInDto>> getIngredientsInAcceptance(@PathVariable("id") Integer writeOffId){
+    public ResponseEntity<List<IngredientInDto>> getIngredientsInWriteOff(@PathVariable("id") Integer writeOffId){
         List<IngredientInDto> ingredients = writeOffService.getIngredientsByWriteOffId(writeOffId);
         return ResponseEntity.status(HttpStatus.OK).body(ingredients);
     }
 
     @GetMapping("/{id}/items")
-    public ResponseEntity<List<ItemInDto>> getItemsInAcceptance(@PathVariable("id") Integer writeOffId){
+    public ResponseEntity<List<ItemInDto>> getItemsInWriteOff(@PathVariable("id") Integer writeOffId){
         List<ItemInDto> items = writeOffService.getItemsByWriteOffId(writeOffId);
         return ResponseEntity.status(HttpStatus.OK).body(items);
     }

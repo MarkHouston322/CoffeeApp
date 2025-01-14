@@ -34,13 +34,8 @@ class LoyaltyLevelRepositoryTest {
     // given
     @BeforeEach
     void setUp(){
-
-        List<LoyaltyLevel> loyaltyLevels = new ArrayList<>(Arrays.asList(
-                new LoyaltyLevel("PRO",1000,0.15f),
-                new LoyaltyLevel("Noob",2000,0.15f),
-                new LoyaltyLevel("Middle",3000,0.15f)
-        ));
-        loyaltyLevelRepository.saveAll(loyaltyLevels);
+        LoyaltyLevel loyaltyLevel = new LoyaltyLevel("PRO",1000,0.15f);
+        loyaltyLevelRepository.save(loyaltyLevel);
     }
 
     @AfterEach
@@ -83,6 +78,11 @@ class LoyaltyLevelRepositoryTest {
 
     @Test
     void shouldFindLoyaltyLevelWithMinEdge(){
+        // given
+        LoyaltyLevel loyaltyLevel1 = new LoyaltyLevel("Noob",2000,0.15f);
+        LoyaltyLevel loyaltyLevel2 = new LoyaltyLevel("Middle",3000,0.15f);
+        loyaltyLevelRepository.save(loyaltyLevel1);
+        loyaltyLevelRepository.save(loyaltyLevel2);
         // when
         LoyaltyLevel loyaltyLevel = loyaltyLevelRepository.findMin();
         // then
@@ -91,6 +91,10 @@ class LoyaltyLevelRepositoryTest {
 
     @Test
     void shouldFindLoyaltyLevelByCustomerPurchasesSum(){
+        LoyaltyLevel loyaltyLevel1 = new LoyaltyLevel("Noob",2000,0.15f);
+        LoyaltyLevel loyaltyLevel2 = new LoyaltyLevel("Middle",3000,0.15f);
+        loyaltyLevelRepository.save(loyaltyLevel1);
+        loyaltyLevelRepository.save(loyaltyLevel2);
         // when
         LoyaltyLevel loyaltyLevel = loyaltyLevelRepository.findByEdge(2550);
         // then

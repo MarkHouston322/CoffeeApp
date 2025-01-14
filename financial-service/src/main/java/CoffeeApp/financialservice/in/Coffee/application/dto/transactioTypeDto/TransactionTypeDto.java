@@ -2,6 +2,7 @@ package CoffeeApp.financialservice.in.Coffee.application.dto.transactioTypeDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -9,6 +10,7 @@ import lombok.Data;
         name = "Fetch and add transaction type",
         description = "Schema to fetch and add transaction type"
 )
+@AllArgsConstructor
 public class TransactionTypeDto {
 
     @Schema(

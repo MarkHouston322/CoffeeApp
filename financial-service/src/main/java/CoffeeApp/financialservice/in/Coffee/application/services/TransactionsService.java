@@ -48,13 +48,13 @@ public class TransactionsService {
 
     @Transactional
     public void paymentTransaction(PaymentMessage paymentMessage) {
-        Session session = sessionService.findCurrentSession();
         String transactionTypeString = paymentMessage.getTransactionType();
         String transactionTypeName = switch (transactionTypeString) {
             case "credit card" -> "Card payment";
             case "cash"        -> "Cash payment";
             default -> throw new IllegalArgumentException("Unknown transaction type: " + transactionTypeString);
         };
+        Session session = sessionService.findCurrentSession();
         Transaction transaction = new Transaction(
                 transactionTypeService.findByName(transactionTypeName),
                 paymentMessage.getSum()
@@ -73,6 +73,7 @@ public class TransactionsService {
         }
         sendTransactionMessage(transaction, transactionKafkaTemplate);
     }
+
 
     @Transactional
     public void createCashInflow(AddTransactionDto addTransactionDto){

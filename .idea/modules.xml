@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/CoffeeAppV2.iml" filepath="$PROJECT_DIR$/.idea/CoffeeAppV2.iml" />
       <module fileurl="file://$PROJECT_DIR$/financial-service/financial-service.iml" filepath="$PROJECT_DIR$/financial-service/financial-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/selling-service/selling-service.iml" filepath="$PROJECT_DIR$/selling-service/selling-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/storage-service/storage-service.iml" filepath="$PROJECT_DIR$/storage-service/storage-service.iml" />
     </modules>
   </component>
 </project>

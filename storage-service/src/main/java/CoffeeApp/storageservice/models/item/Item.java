@@ -54,4 +54,18 @@ public class Item {
         this.costPrice = costPrice;
         this.category = category;
     }
+
+    public Item(String name, Integer price, Float quantityInStock) {
+        this.name = name;
+        this.price = price;
+        this.quantityInStock = quantityInStock;
+    }
+
+    public Item(String name, Float surchargeRatio, Float costPrice, Float quantityInStock, Category category) {
+        this.name = name;
+        this.surchargeRatio = surchargeRatio;
+        this.costPrice = costPrice;
+        this.quantityInStock = quantityInStock;
+        this.category = category;
+    }
 }

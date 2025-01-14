@@ -28,11 +28,6 @@ public class TransactionTypeService {
                 .collect(Collectors.toList()));
     }
 
-    public TransactionTypeDto findById(Integer id){
-        TransactionType transactionType = checkIfExists(id);
-        return convertToTransactionTypeDto(transactionType);
-    }
-
     public TransactionType findByName(String name){
         return transactionTypeRepository.findByName(name).orElseThrow(
                 () -> new ResourceNotFoundException("Transaction type", "name", name)
@@ -51,32 +46,6 @@ public class TransactionTypeService {
             throw new TransactionTypeAlreadyExistsException("Transaction type has already been added with this name: " + transactionType.getName());
         }
         transactionTypeRepository.save(transactionType);
-    }
-
-    @Transactional
-    public boolean updateTransactionalType(Integer id, TransactionTypeDto transactionTypeDto){
-        boolean isUpdated = false;
-        if (transactionTypeDto != null){
-            TransactionType transactionTypeToBeUpdated = checkIfExists(id);
-            TransactionType updatedTransactionType = convertToTransactionType(transactionTypeDto);
-            updatedTransactionType.setId(id);
-            updatedTransactionType.setTransactions(transactionTypeToBeUpdated.getTransactions());
-            transactionTypeRepository.save(updatedTransactionType);
-            isUpdated = true;
-        }
-        return isUpdated;
-    }
-
-    @Transactional
-    public boolean deleteTransactionalType(Integer id){
-        checkIfExists(id);
-        transactionTypeRepository.deleteById(id);
-        return true;
-    }
-    private TransactionType checkIfExists(int id) {
-        return transactionTypeRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Transaction type", "id", Integer.toString(id))
-        );
     }
 
     private TransactionTypeDto convertToTransactionTypeDto(TransactionType transactionType){

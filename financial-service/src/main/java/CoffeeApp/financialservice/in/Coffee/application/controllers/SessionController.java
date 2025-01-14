@@ -86,10 +86,6 @@ public class SessionController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -100,16 +96,11 @@ public class SessionController {
     )
     @GetMapping("/open")
     public ResponseEntity<ResponseDto> openSession(@RequestHeader("Preferred-Username") String username) {
-        boolean isOpened = sessionService.openSession(username);
-        if (isOpened) {
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(new ResponseDto(SessionConstants.STATUS_201, SessionConstants.MESSAGE_201_OPEN));
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(SessionConstants.STATUS_417, SessionConstants.MESSAGE_417_OPEN));
-        }
+        sessionService.openSession(username);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ResponseDto(SessionConstants.STATUS_201, SessionConstants.MESSAGE_201_OPEN));
+
     }
 
 
@@ -123,10 +114,6 @@ public class SessionController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -137,16 +124,10 @@ public class SessionController {
     )
     @GetMapping("/close")
     public ResponseEntity<ResponseDto> closeSession() {
-        boolean isClosed = sessionService.closeSession();
-        if (isClosed) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ResponseDto(SessionConstants.STATUS_200, SessionConstants.MESSAGE_200_CLOSE));
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(SessionConstants.STATUS_417, SessionConstants.MESSAGE_417_CLOSE));
-        }
+        sessionService.closeSession();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseDto(SessionConstants.STATUS_200, SessionConstants.MESSAGE_200_CLOSE));
     }
 
 }

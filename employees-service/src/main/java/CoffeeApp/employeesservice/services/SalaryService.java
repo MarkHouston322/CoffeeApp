@@ -49,6 +49,12 @@ public class SalaryService {
                 .collect(Collectors.toList()));
     }
 
+    public Salary findCurrentSalarySession(){
+        return salaryRepository.findLastOpenSalarySession().orElseThrow(
+                () -> new ResourceNotFoundException("Salary session", "is closed", "false")
+        );
+    }
+
     @Transactional
     public void openSalarySession (SessionMessage sessionMessage){
         Salary salary = new Salary();
@@ -70,6 +76,13 @@ public class SalaryService {
         salaryRepository.save(salary);
     }
 
+    @Transactional
+    public void closeSalarySession(){
+        Salary currentSalarySession = findCurrentSalarySession();
+        currentSalarySession.setIsClosed(true);
+        sendSalaryMessage(currentSalarySession,salaryKafkaTemplate);
+    }
+
 
     @Transactional
     public void updateSalary(OrderMessage orderMessage){
@@ -85,17 +98,9 @@ public class SalaryService {
     }
 
     @Transactional
-    public boolean deleteSalary(Integer id){
+    public void deleteSalary(Integer id){
         checkIfExists(id);
         salaryRepository.deleteById(id);
-        return true;
-    }
-
-    @Transactional
-    public void closeSalarySession(){
-        Salary currentSalarySession = findCurrentSalarySession();
-        currentSalarySession.setIsClosed(true);
-        sendSalaryMessage(currentSalarySession,salaryKafkaTemplate);
     }
 
     private void sendSalaryMessage(Salary salary, KafkaTemplate<String, ProceedSalaryMessage> salaryKafkaTemplate){
@@ -106,12 +111,6 @@ public class SalaryService {
     private Salary checkIfExists(int id) {
         return salaryRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Salary", "id", Integer.toString(id))
-        );
-    }
-
-    public Salary findCurrentSalarySession(){
-        return salaryRepository.findLastOpenSalarySession().orElseThrow(
-                () -> new ResourceNotFoundException("Salary session", "is closed", "false")
         );
     }
 

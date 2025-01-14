@@ -36,12 +36,6 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(orderDto);
     }
 
-    @GetMapping("/drink/{name}")
-    public ResponseEntity<String> findDrink(@PathVariable("name") String name){
-        String drink = orderService.getDrink(name);
-        return ResponseEntity.status(HttpStatus.OK).body(drink);
-    }
-
     @GetMapping("/{id}/drinks")
     public ResponseEntity<List<GoodInOrderDto>> getDrinksInOrder(@PathVariable("id") Integer id){
         List<GoodInOrderDto> drinks = orderService.getGoodsInOrder(id);

@@ -40,35 +40,30 @@ public class CategoryService {
     @Transactional
     public void addCategory(CategoryDto categoryDto) {
         Category categoryToAdd = convertToCategory(categoryDto);
-        Optional<Category> optionalCategory =categoryRepository.findByName(categoryToAdd.getName());
-        if (optionalCategory.isPresent()){
+        Optional<Category> optionalCategory = categoryRepository.findByName(categoryToAdd.getName());
+        if (optionalCategory.isPresent()) {
             throw new CategoryAlreadyExistsException("Category has already been added with this name: " + categoryToAdd.getName());
         }
         categoryRepository.save(categoryToAdd);
     }
 
     @Transactional
-    public boolean deleteCategory(int id) {
+    public void deleteCategory(int id) {
         checkIfExists(id);
         categoryRepository.deleteById(id);
-        return true;
     }
 
     @Transactional
-    public boolean updateCategory(int id, CategoryDto categoryDto) {
-        boolean isUpdated = false;
-        if (categoryDto != null){
-            Category categoryToBeUpdated = checkIfExists(id);
-            Category updatedCategory = convertToCategory(categoryDto);
-            updatedCategory.setId(id);
-            updatedCategory.setDrinks(categoryToBeUpdated.getDrinks());
-            categoryRepository.save(updatedCategory);
-            isUpdated = true;
-        }
-       return isUpdated;
+    public void updateCategory(int id, CategoryDto categoryDto) {
+        Category categoryToBeUpdated = checkIfExists(id);
+        Category updatedCategory = convertToCategory(categoryDto);
+        updatedCategory.setId(id);
+        updatedCategory.setDrinks(categoryToBeUpdated.getDrinks());
+        categoryRepository.save(updatedCategory);
+
     }
 
-    private Category checkIfExists(int id){
+    private Category checkIfExists(int id) {
         return categoryRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Category", "id", Integer.toString(id))
         );
@@ -78,7 +73,7 @@ public class CategoryService {
         return modelMapper.map(category, CategoryDto.class);
     }
 
-    private Category convertToCategory(CategoryDto categoryDto){
+    private Category convertToCategory(CategoryDto categoryDto) {
         return modelMapper.map(categoryDto, Category.class);
     }
 }

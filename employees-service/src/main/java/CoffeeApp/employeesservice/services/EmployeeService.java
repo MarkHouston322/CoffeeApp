@@ -27,15 +27,6 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final PositionService positionService;
     private final ModelMapper modelMapper;
-    private final PositionRepository positionRepository;
-    private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
-
-
-    // конвертить в дто в контроллере
-    public EmployeeResponse findByNameStartingWith(String name) {
-        return new EmployeeResponse(employeeRepository.findByNameStartingWith(name).stream().map(this::convertToEmployeeDto)
-                .collect(Collectors.toList()));
-    }
 
     @Transactional(noRollbackFor = ResourceNotFoundException.class)
     public Employee findByName(String name) {
@@ -49,29 +40,27 @@ public class EmployeeService {
 
     @Transactional
     public Employee addEmployee(String employeeName) {
-        try {
-            Employee employeeToAdd = new Employee(employeeName, positionService.findById(1));
-            employeeRepository.save(employeeToAdd);
-            return employeeToAdd;
-        } catch (Exception e) {
-            throw e;
+        Optional<Employee> optionalEmployee = employeeRepository.findByName(employeeName);
+        if (optionalEmployee.isPresent()){
+            throw new EmployeeAlreadyExistsException("Employee has already been added with this name: " + employeeName);
         }
+        Employee employeeToAdd = new Employee(employeeName, positionService.findById(1));
+        employeeRepository.save(employeeToAdd);
+        return employeeToAdd;
     }
 
 
     @Transactional
-    public boolean deleteEmployee(String name) {
+    public void deleteEmployee(String name) {
         checkIfExists(name);
         employeeRepository.deleteByName(name);
-        return true;
     }
 
     @Transactional
-    public boolean assignPosition(String employeeName, Integer positionId) {
+    public void assignPosition(String employeeName, Integer positionId) {
         Employee employee = checkIfExists(employeeName);
-        Position position = positionService.findForAssigment(positionId);
+        Position position = positionService.findById(positionId);
         employee.setPosition(position);
-        return true;
     }
 
     private Employee checkIfExists(String name) {
@@ -84,7 +73,4 @@ public class EmployeeService {
         return modelMapper.map(employee, EmployeeDto.class);
     }
 
-    private Position convertToPosition(PositionDto positionDto) {
-        return modelMapper.map(positionDto, Position.class);
-    }
 }

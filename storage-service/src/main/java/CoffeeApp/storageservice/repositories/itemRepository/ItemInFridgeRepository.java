@@ -11,7 +11,9 @@ import java.util.Optional;
 
 public interface ItemInFridgeRepository extends JpaRepository<ItemInFridge, Integer> {
 
-    List<ItemInFridge> findByItem(Item item);
+    @Query("select p from ItemInFridge p where p.item.name = :itemName")
+    List<ItemInFridge> findByItemName(@Param("itemName") String name);
+
     @Query("select p from ItemInFridge p where p.item = :item and p.isSold = false and p.expired = false")
     Optional<ItemInFridge> isItemInFridge(@Param("item") Item item);
 

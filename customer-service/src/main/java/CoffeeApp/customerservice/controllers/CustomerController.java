@@ -54,7 +54,7 @@ public class CustomerController {
     }
     )
     @GetMapping
-    public CustomerResponse findAll(){
+    public CustomerResponse findAll() {
         return customerService.findAll();
     }
 
@@ -77,7 +77,7 @@ public class CustomerController {
     }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("id") Integer id){
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("id") Integer id) {
         CustomerDto customer = customerService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(customer);
     }
@@ -101,8 +101,8 @@ public class CustomerController {
     }
     )
     @GetMapping("/get/{query}")
-    public Map<String, CustomerResponse> getCustomer(@PathVariable("query") String query){
-        Map<String,CustomerResponse> users = new HashMap<>();
+    public Map<String, CustomerResponse> getCustomer(@PathVariable("query") String query) {
+        Map<String, CustomerResponse> users = new HashMap<>();
         CustomerResponse usersBySecondName = customerService.findBySecondName(query);
         CustomerResponse usersByMobileNumber = customerService.findByMobileNumber(query);
         users.put("Users find by second name", usersBySecondName);
@@ -129,11 +129,11 @@ public class CustomerController {
     }
     )
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addCustomer(@Valid @RequestBody AddCustomerDto addCustomerDto){
+    public ResponseEntity<ResponseDto> addCustomer(@Valid @RequestBody AddCustomerDto addCustomerDto) {
         customerService.addCustomer(addCustomerDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ResponseDto(CustomerConstants.STATUS_201,CustomerConstants.MESSAGE_201));
+                .body(new ResponseDto(CustomerConstants.STATUS_201, CustomerConstants.MESSAGE_201));
     }
 
     @Operation(
@@ -146,10 +146,6 @@ public class CustomerController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -160,13 +156,10 @@ public class CustomerController {
     )
     @PatchMapping("/{id}/update")
     public ResponseEntity<ResponseDto> updateCustomer(@PathVariable("id") Integer id,
-                                                      @Valid @RequestBody AddCustomerDto addCustomerDto){
-        boolean isUpdated = customerService.updateCustomer(id,addCustomerDto);
-        if (isUpdated){
-            return responseStatusOk();
-        } return ResponseEntity
-                .status(HttpStatus.EXPECTATION_FAILED)
-                .body(new ResponseDto(CustomerConstants.STATUS_417, CustomerConstants.MESSAGE_417_UPDATE));
+                                                      @Valid @RequestBody AddCustomerDto addCustomerDto) {
+        customerService.updateCustomer(id, addCustomerDto);
+        return responseStatusOk();
+
     }
 
     @Operation(
@@ -179,10 +172,6 @@ public class CustomerController {
                     description = "HTTP Status OK"
             ),
             @ApiResponse(
-                    responseCode = "417",
-                    description = "Expectation Failed"
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
@@ -192,16 +181,12 @@ public class CustomerController {
     }
     )
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<ResponseDto> deleteCustomer(@PathVariable("id") Integer id){
-        boolean isDeleted = customerService.deleteCustomer(id);
-        if (isDeleted){
-            return responseStatusOk();
-        } return ResponseEntity
-                .status(HttpStatus.EXPECTATION_FAILED)
-                .body(new ResponseDto(CustomerConstants.STATUS_417, CustomerConstants.MESSAGE_417_DELETE));
+    public ResponseEntity<ResponseDto> deleteCustomer(@PathVariable("id") Integer id) {
+        customerService.deleteCustomer(id);
+        return responseStatusOk();
     }
 
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(CustomerConstants.STATUS_200, CustomerConstants.MESSAGE_200));

@@ -42,7 +42,7 @@ public class SessionService {
     }
 
     @Transactional
-    public boolean openSession(String username) {
+    public void openSession(String username) {
         findLastOpenSessionIfExists();
         Session session = new Session();
         Optional<Session> lastSession = sessionRepository.findLastSession();
@@ -61,11 +61,10 @@ public class SessionService {
         sessionRepository.save(session);
         sendSession(session);
         sendEmployee(session);
-        return true;
     }
 
     @Transactional
-    public boolean closeSession() {
+    public void closeSession() {
         Session openSession = findCurrentSession();
         openSession.setId(openSession.getId());
         openSession.setTransactions(openSession.getTransactions());
@@ -75,10 +74,9 @@ public class SessionService {
         sendSession(openSession);
         sendEmployee(openSession);
         sendSessionMessage(openSession,sessionKafkaTemplate);
-        return true;
     }
 
-    public void findLastOpenSessionIfExists() {
+    private void findLastOpenSessionIfExists() {
         Optional<Session> dailyFinance = sessionRepository.findLastOpenSession();
         if (dailyFinance.isPresent()) {
             throw new LastSessionIsOpenedException("Last session is opened. Close it to be able to start new session");

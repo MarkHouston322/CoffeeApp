@@ -22,22 +22,22 @@ public class FridgeController {
     private final ItemInFridgeService itemInFridgeService;
 
     @GetMapping
-    public ItemInFridgeResponse getItemsInFridge(){
+    public ItemInFridgeResponse getItemsInFridge() {
         return itemInFridgeService.getItemsFromFridge();
     }
 
     @GetMapping("/history")
-    public ItemInFridgeResponse getItemsInFridgeHistory(){
+    public ItemInFridgeResponse getItemsInFridgeHistory() {
         return itemInFridgeService.findAll();
     }
 
-    @GetMapping("/item")
-    public ItemInFridgeResponse getItemHistoryInFridge(@RequestBody Item item){
-        return itemInFridgeService.findByItem(item);
+    @GetMapping("/item/{name}")
+    public ItemInFridgeResponse getItemHistoryInFridge(@PathVariable("name") String name) {
+        return itemInFridgeService.findByItemName(name);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addItemToFridge(@Valid @RequestBody AddItemInFridgeDto item){
+    public ResponseEntity<ResponseDto> addItemToFridge(@Valid @RequestBody AddItemInFridgeDto item) {
         itemInFridgeService.addItemToFridge(item);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -45,20 +45,13 @@ public class FridgeController {
     }
 
     @PatchMapping("/remove/{id}")
-    public ResponseEntity<ResponseDto> removeItemFromFridge(@PathVariable("id") Integer id){
-        boolean isRemoved = itemInFridgeService.removeItemFromFridge(id);
-        if (isRemoved){
-            return responseStatusOk();
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(ItemInFridgeConstants.STATUS_417, ItemInFridgeConstants.MESSAGE_417_WRITE_OFF));
-        }
+    public ResponseEntity<ResponseDto> removeItemFromFridge(@PathVariable("id") Integer id) {
+        itemInFridgeService.removeItemFromFridge(id);
+        return responseStatusOk();
     }
 
 
-
-    private ResponseEntity<ResponseDto> responseStatusOk(){
+    private ResponseEntity<ResponseDto> responseStatusOk() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(ItemInFridgeConstants.STATUS_200, ItemInFridgeConstants.MESSAGE_200));

@@ -1,6 +1,7 @@
 package CoffeeApp.financialservice.in.Coffee.application.dto.totalFinanceDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -8,6 +9,7 @@ import lombok.Data;
         name = "Fetch total finance info",
         description = "Schema to fetch salary total finance info"
 )
+@AllArgsConstructor
 public class TotalFinanceDto {
 
     @Schema(
